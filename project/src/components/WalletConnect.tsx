@@ -4,20 +4,20 @@ import { Wallet, LogOut, Loader2 } from 'lucide-react';
 
 interface WalletConnectProps {
   walletInfo: WalletInfo;
-  onConnect: () => void;
+  onConnect: () => void; // Функція для підключення гаманця
   onDisconnect: () => void;
   isConnecting: boolean;
   isMobile?: boolean;
 }
 
 const WalletConnect: React.FC<WalletConnectProps> = React.memo(({ walletInfo, onConnect, onDisconnect, isConnecting, isMobile }) => {
-  // Format wallet address for display
+  // Форматування адреси гаманця для відображення
   const formatAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
   const handleConnect = useCallback(() => {
-    onConnect();
+    onConnect(); // Виклик функції підключення
   }, [onConnect]);
 
   const handleDisconnect = useCallback(() => {
@@ -45,10 +45,8 @@ const WalletConnect: React.FC<WalletConnectProps> = React.memo(({ walletInfo, on
         <button
           onClick={handleConnect}
           disabled={isConnecting}
-          className={`
-            bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6]
+          className={`bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6]
             text-black font-semibold py-2 px-4 rounded-lg transition-all transform hover:scale-105
-            flex items-center justify-center
             ${isMobile ? 'w-full' : ''}
           `}
         >

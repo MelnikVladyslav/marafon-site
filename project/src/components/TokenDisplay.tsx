@@ -6,6 +6,11 @@ interface TokenDisplayProps {
 }
 
 const TokenDisplay: React.FC<TokenDisplayProps> = React.memo(({ tokens }) => {
+  if (!tokens) {
+    console.log('Tokens:', tokens);
+    return <div>No tokens available.</div>;
+  }
+
   return (
     <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
       <h2 className="text-white text-lg font-semibold mb-4">Your Tokens</h2>

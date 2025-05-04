@@ -1,17 +1,16 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Bet, Token, WalletInfo } from '../types';
-import { mockBets } from '../data/mockData';
+import { ethers } from 'ethers';
+import { Bet, WalletInfo } from '../types';
+import Betting from '../../Betting.json';
 
 export const useSmartContract = (walletInfo: WalletInfo) => {
-  const [userBets, setUserBets] = useState<Bet[]>(mockBets);
+  const [userBets, setUserBets] = useState<Bet[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Memoized user bets
   const memoizedUserBets = useMemo(() => userBets, [userBets]);
 
-  // General function to handle bets
   const handleBet = useCallback(async (action: 'place' | 'withdraw', betDetails: any) => {
     if (!walletInfo.connected) {
       setError('Wallet not connected. Please connect your wallet first.');
@@ -22,10 +21,14 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
     setError(null);
     
     try {
-      // Simulate transaction delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Підключення до провайдера
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract('0x2222222222222222222222222222222222222222', Betting, signer);
 
       if (action === 'place') {
+        const tx = await contract.placeBet(betDetails.tournamentId, betDetails.teamId, betDetails.amount, betDetails.odds);
+        await tx.wait(); // Чекаємо, поки транзакція буде підтверджена
         const newBet: Bet = {
           id: `b${Date.now()}`,
           tournamentId: betDetails.tournamentId,
@@ -37,6 +40,8 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
         };
         setUserBets(prev => [newBet, ...prev]);
       } else if (action === 'withdraw') {
+        const tx = await contract.withdrawWinnings(betDetails.betId);
+        await tx.wait(); // Чекаємо, поки транзакція буде підтверджена
         setUserBets(prev => 
           prev.map(bet => 
             bet.id === betDetails.betId 
@@ -46,10 +51,8 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
         );
       }
 
-      // Mock transaction hash
-      const txHash = `0x${Math.random().toString(16).substring(2)}${Math.random().toString(16).substring(2)}`;
-      setTransactionHash(txHash);
-      return txHash;
+      setTransactionHash(tx.hash);
+      return tx.hash;
     } catch (err) {
       setError(`Failed to ${action === 'place' ? 'place bet' : 'withdraw winnings'}. Please try again.`);
       console.error('Smart contract error:', err);
