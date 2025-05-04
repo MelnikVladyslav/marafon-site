@@ -1,7 +1,7 @@
 import React from 'react';
 import { Github, Twitter, Disc as Discord } from 'lucide-react';
 
-const Footer: React.FC = () => {
+const Footer: React.FC = React.memo(() => {
   return (
     <footer className="bg-[#0d1117] border-t border-[#30363d] py-8 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +24,6 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          
           <div>
             <h4 className="text-white font-semibold mb-3">Quick Links</h4>
             <ul className="space-y-2">
@@ -42,7 +41,6 @@ const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-          
           <div>
             <h4 className="text-white font-semibold mb-3">Resources</h4>
             <ul className="space-y-2">
@@ -61,7 +59,6 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-        
         <div className="border-t border-[#30363d] mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
             &copy; {new Date().getFullYear()} UaDep. All rights reserved.
@@ -73,6 +70,6 @@ const Footer: React.FC = () => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;

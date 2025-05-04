@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { CheckCircle2, X, ExternalLink } from 'lucide-react';
 
 interface TransactionNotificationProps {
@@ -6,7 +6,7 @@ interface TransactionNotificationProps {
   onClose: () => void;
 }
 
-const TransactionNotification: React.FC<TransactionNotificationProps> = ({ 
+const TransactionNotification: React.FC<TransactionNotificationProps> = memo(({ 
   txHash, 
   onClose 
 }) => {
@@ -69,6 +69,6 @@ const TransactionNotification: React.FC<TransactionNotificationProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export default TransactionNotification;

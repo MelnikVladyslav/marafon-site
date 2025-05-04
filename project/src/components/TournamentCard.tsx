@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Tournament } from '../types';
 import { Clock, Award } from 'lucide-react';
 
@@ -7,9 +7,9 @@ interface TournamentCardProps {
   onPlaceBet: (tournamentId: string, teamId: string, teamName: string, odds: number) => void;
 }
 
-const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onPlaceBet }) => {
+const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, onPlaceBet }) => {
   // Format date for display
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
       month: 'short',
@@ -17,10 +17,10 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onPlaceBet 
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
+  }, []);
 
   // Status badge styles based on status
-  const getStatusStyles = () => {
+  const getStatusStyles = useCallback(() => {
     switch (tournament.status) {
       case 'live':
         return 'bg-red-500 text-white animate-pulse';
@@ -31,7 +31,11 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onPlaceBet 
       default:
         return 'bg-gray-500 text-white';
     }
-  };
+  }, [tournament.status]);
+
+  const handlePlaceBet = useCallback((teamId: string, teamName: string, odds: number) => {
+    onPlaceBet(tournament.id, teamId, teamName, odds);
+  }, [onPlaceBet, tournament.id]);
 
   return (
     <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden transform transition-all hover:scale-[1.02] hover:shadow-lg">
@@ -74,8 +78,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onPlaceBet 
               <span className="text-white font-medium">{tournament.teams[0].name}</span>
             </div>
             <button 
-              onClick={() => onPlaceBet(
-                tournament.id, 
+              onClick={() => handlePlaceBet(
                 tournament.teams[0].id,
                 tournament.teams[0].name,
                 tournament.odds[0]
@@ -98,8 +101,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onPlaceBet 
               <span className="text-white font-medium">{tournament.teams[1].name}</span>
             </div>
             <button
-              onClick={() => onPlaceBet(
-                tournament.id,
+              onClick={() => handlePlaceBet(
                 tournament.teams[1].id,
                 tournament.teams[1].name,
                 tournament.odds[1]
@@ -113,6 +115,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament, onPlaceBet 
       </div>
     </div>
   );
-};
+});
 
 export default TournamentCard;

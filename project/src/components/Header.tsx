@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { WalletInfo } from '../types';
 import { Gamepad2, Trophy, Menu, X } from 'lucide-react';
 import WalletConnect from './WalletConnect';
@@ -10,13 +10,21 @@ interface HeaderProps {
   isConnecting: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ 
+const Header: React.FC<HeaderProps> = React.memo(({ 
   walletInfo, 
   onConnect, 
   onDisconnect, 
   isConnecting 
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const handleMenuToggle = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
+
+  const handleLinkClick = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
 
   return (
     <header className="bg-[#0d1117] bg-opacity-95 backdrop-blur-md sticky top-0 z-50 border-b border-[#30363d]">
@@ -30,13 +38,13 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#tournaments" className="text-gray-300 hover:text-white transition-colors">
+            <a href="#tournaments" className="text-gray-300 hover:text-white transition-colors" onClick={handleLinkClick}>
               Tournaments
             </a>
-            <a href="#mybets" className="text-gray-300 hover:text-white transition-colors">
+            <a href="#mybets" className="text-gray-300 hover:text-white transition-colors" onClick={handleLinkClick}>
               My Bets
             </a>
-            <a href="#leaderboard" className="text-gray-300 hover:text-white transition-colors">
+            <a href="#leaderboard" className="text-gray-300 hover:text-white transition-colors" onClick={handleLinkClick}>
               Leaderboard
             </a>
             <WalletConnect 
@@ -50,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={handleMenuToggle}
               className="text-gray-300 hover:text-white"
             >
               {isMenuOpen ? (
@@ -70,21 +78,21 @@ const Header: React.FC<HeaderProps> = ({
             <a 
               href="#tournaments" 
               className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-[#30363d] rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={handleLinkClick}
             >
               Tournaments
             </a>
             <a 
               href="#mybets" 
               className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-[#30363d] rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={handleLinkClick}
             >
               My Bets
             </a>
             <a 
               href="#leaderboard" 
               className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-[#30363d] rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={handleLinkClick}
             >
               Leaderboard
             </a>
@@ -102,6 +110,6 @@ const Header: React.FC<HeaderProps> = ({
       )}
     </header>
   );
-};
+});
 
 export default Header;

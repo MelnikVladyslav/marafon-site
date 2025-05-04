@@ -9,7 +9,7 @@ interface UserBetsProps {
   isProcessing: boolean;
 }
 
-const UserBets: React.FC<UserBetsProps> = ({ bets, tournaments, onWithdraw, isProcessing }) => {
+const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWithdraw, isProcessing }) => {
   const [expandedBet, setExpandedBet] = React.useState<string | null>(null);
 
   // Toggle expanded bet
@@ -151,6 +151,6 @@ const UserBets: React.FC<UserBetsProps> = ({ bets, tournaments, onWithdraw, isPr
       )}
     </div>
   );
-};
+});
 
 export default UserBets;

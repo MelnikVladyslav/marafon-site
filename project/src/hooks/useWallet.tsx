@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { WalletInfo } from '../types';
 import { mockWallet } from '../data/mockData';
 
@@ -14,6 +14,9 @@ export const useWallet = () => {
   const checkWalletAvailability = useCallback(() => {
     return typeof window !== 'undefined' && window.ethereum !== undefined;
   }, []);
+
+  // Memoized wallet availability
+  const isWalletAvailable = useMemo(() => checkWalletAvailability(), [checkWalletAvailability]);
 
   // Connect wallet function
   const connectWallet = useCallback(async () => {
@@ -49,7 +52,7 @@ export const useWallet = () => {
     walletInfo,
     isConnecting,
     error,
-    isWalletAvailable: checkWalletAvailability(),
+    isWalletAvailable,
     connectWallet,
     disconnectWallet
   };

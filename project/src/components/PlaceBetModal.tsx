@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import useWallet from '../hooks/useWallet';
 
@@ -11,14 +11,7 @@ interface PlaceBetModalProps {
   isWalletConnected: boolean;
 }
 
-const PlaceBetModal: React.FC<PlaceBetModalProps> = ({
-  isOpen,
-  onClose,
-  teamName,
-  odds,
-  onPlaceBet,
-  isWalletConnected
-}) => {
+const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(({ isOpen, onClose, teamName, odds, onPlaceBet, isWalletConnected }) => {
   const [amount, setAmount] = useState<string>('0.01');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,10 +31,7 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = ({
     };
   }, [onClose]);
   
-  if (!isOpen) return null;
-  
-  // Handle placing bet
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
@@ -71,7 +61,17 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = ({
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [amount, isWalletConnected, onPlaceBet, onClose]);
+  
+  const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value);
+  }, []);
+  
+  const handleQuickBet = useCallback((amount: string) => {
+    setAmount(amount);
+  }, []);
+  
+  if (!isOpen) return null;
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4">
@@ -119,7 +119,7 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = ({
                   step="0.001"
                   min="0.001"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={handleAmountChange}
                   className="bg-[#0d1117] border border-[#30363d] text-white w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00a8ff]"
                   disabled={isSubmitting}
                   required
@@ -129,28 +129,28 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = ({
               <div className="flex justify-between mt-3 text-sm">
                 <button 
                   type="button" 
-                  onClick={() => setAmount('0.01')}
+                  onClick={() => handleQuickBet('0.01')}
                   className="bg-[#21262d] text-white px-2 py-1 rounded"
                 >
                   0.01
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => setAmount('0.05')}
+                  onClick={() => handleQuickBet('0.05')}
                   className="bg-[#21262d] text-white px-2 py-1 rounded"
                 >
                   0.05
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => setAmount('0.1')}
+                  onClick={() => handleQuickBet('0.1')}
                   className="bg-[#21262d] text-white px-2 py-1 rounded"
                 >
                   0.1
                 </button>
                 <button 
                   type="button" 
-                  onClick={() => setAmount('0.5')}
+                  onClick={() => handleQuickBet('0.5')}
                   className="bg-[#21262d] text-white px-2 py-1 rounded"
                 >
                   0.5
@@ -200,6 +200,6 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export default PlaceBetModal;

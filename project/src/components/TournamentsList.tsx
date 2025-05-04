@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Tournament } from '../types';
 import TournamentCard from './TournamentCard';
 import PlaceBetModal from './PlaceBetModal';
@@ -10,7 +10,7 @@ interface TournamentsListProps {
   isWalletConnected: boolean;
 }
 
-const TournamentsList: React.FC<TournamentsListProps> = ({ 
+const TournamentsList: React.FC<TournamentsListProps> = memo(({ 
   tournaments, 
   onPlaceBet,
   isWalletConnected
@@ -53,21 +53,23 @@ const TournamentsList: React.FC<TournamentsListProps> = ({
   };
 
   // Handle bet placement
-  const handlePlaceBet = async (amount: number) => {
+  const handlePlaceBet = async (amount: number): Promise<string | null> => {
     if (selectedBet) {
-      const result = await onPlaceBet(
-        selectedBet.tournamentId,
-        selectedBet.teamId,
-        amount,
-        selectedBet.odds
-      );
-      
-      if (result) {
-        setIsBetModalOpen(false);
-        setSelectedBet(null);
-      }
+        const result = await onPlaceBet(
+            selectedBet.tournamentId,
+            selectedBet.teamId,
+            amount,
+            selectedBet.odds
+        );
+        
+        if (result) {
+            setIsBetModalOpen(false);
+            setSelectedBet(null);
+        }
+        return result;
     }
-  };
+    return null;
+};
 
   return (
     <div>
@@ -145,6 +147,6 @@ const TournamentsList: React.FC<TournamentsListProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default TournamentsList;

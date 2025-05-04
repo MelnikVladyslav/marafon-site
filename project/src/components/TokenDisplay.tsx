@@ -5,7 +5,7 @@ interface TokenDisplayProps {
   tokens: Token[];
 }
 
-const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
+const TokenDisplay: React.FC<TokenDisplayProps> = React.memo(({ tokens }) => {
   return (
     <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
       <h2 className="text-white text-lg font-semibold mb-4">Your Tokens</h2>
@@ -35,6 +35,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
       </button>
     </div>
   );
-};
+});
 
 export default TokenDisplay;
