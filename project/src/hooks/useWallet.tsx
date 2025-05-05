@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { WalletInfo } from '../types';
+import Modal from '../components/Modal';
 
 export const useWallet = () => {
   const [walletInfo, setWalletInfo] = useState<WalletInfo>({
@@ -9,6 +10,8 @@ export const useWallet = () => {
   });
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [modalMessage, setModalMessage] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // Check if wallet is available in window object (MetaMask)
   const checkWalletAvailability = useCallback(() => {
@@ -20,6 +23,8 @@ export const useWallet = () => {
     console.log('Connecting to wallet...');
     if (!checkWalletAvailability()) {
       setError('MetaMask is not installed. Please install it to use this feature.');
+      setModalMessage('MetaMask is not installed. Please install it to use this feature.');
+      setIsModalOpen(true);
       return;
     }
   
@@ -48,13 +53,20 @@ export const useWallet = () => {
         connected: true,
         balance: weiToEther(balance),
       });
+      setModalMessage('Wallet connected successfully!');
+      setIsModalOpen(true);
     } catch (err) {
       setError('Failed to connect wallet. Please try again.');
-      console.error('Wallet connection error:', err);
+      setModalMessage('Failed to connect wallet. Please try again.');
+      setIsModalOpen(true);
     } finally {
       setIsConnecting(false);
     }
   }, [checkWalletAvailability]);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   // Disconnect wallet function
   const disconnectWallet = useCallback(() => {
@@ -71,7 +83,10 @@ export const useWallet = () => {
     error,
     isWalletAvailable: checkWalletAvailability(),
     connectWallet,
-    disconnectWallet
+    disconnectWallet,
+    modalMessage,
+    isModalOpen,
+    closeModal
   };
 };
 

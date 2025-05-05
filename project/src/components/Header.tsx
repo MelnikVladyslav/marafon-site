@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { WalletInfo } from '../types';
-import { Gamepad2, Trophy, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import logo from '../assets/logo.jpg';
 import WalletConnect from './WalletConnect';
 
 interface HeaderProps {
@@ -8,13 +9,19 @@ interface HeaderProps {
   onConnect: () => void;
   onDisconnect: () => void;
   isConnecting: boolean;
+  modalMessage: string;
+  isModalOpen: boolean;
+  closeModal: () => void;
 }
 
 const Header: React.FC<HeaderProps> = React.memo(({ 
   walletInfo, 
   onConnect, 
   onDisconnect, 
-  isConnecting 
+  isConnecting,
+  modalMessage,
+  isModalOpen,
+  closeModal 
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -32,7 +39,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <Gamepad2 className="h-8 w-8 text-[#00f5d4] mr-2" />
+            <img src={logo} alt="Logo" className="h-10 w-10 mr-2" />
             <span className="text-white font-bold text-xl">Ua<span className="text-[#00a8ff]">Dep</span></span>
           </div>
 
@@ -52,6 +59,9 @@ const Header: React.FC<HeaderProps> = React.memo(({
               onConnect={onConnect}
               onDisconnect={onDisconnect}
               isConnecting={isConnecting}
+              modalMessage={modalMessage}
+              isModalOpen={isModalOpen}
+              closeModal={closeModal}
             />
           </nav>
 
@@ -102,6 +112,9 @@ const Header: React.FC<HeaderProps> = React.memo(({
                 onConnect={onConnect}
                 onDisconnect={onDisconnect}
                 isConnecting={isConnecting}
+                modalMessage={modalMessage}
+                isModalOpen={isModalOpen}
+                closeModal={closeModal}
                 isMobile={true}
               />
             </div>

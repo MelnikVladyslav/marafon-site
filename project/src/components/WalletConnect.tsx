@@ -1,16 +1,20 @@
 import React, { useCallback } from 'react';
 import { WalletInfo } from '../types';
 import { Wallet, LogOut, Loader2 } from 'lucide-react';
+import Modal from './Modal';
 
 interface WalletConnectProps {
   walletInfo: WalletInfo;
   onConnect: () => void; // Функція для підключення гаманця
   onDisconnect: () => void;
   isConnecting: boolean;
+  modalMessage: string;
+  isModalOpen: boolean;
+  closeModal: () => void;
   isMobile?: boolean;
 }
 
-const WalletConnect: React.FC<WalletConnectProps> = React.memo(({ walletInfo, onConnect, onDisconnect, isConnecting, isMobile }) => {
+const WalletConnect: React.FC<WalletConnectProps> = React.memo(({ walletInfo, onConnect, onDisconnect, isConnecting, modalMessage, isModalOpen, closeModal, isMobile }) => {
   // Форматування адреси гаманця для відображення
   const formatAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
@@ -63,6 +67,9 @@ const WalletConnect: React.FC<WalletConnectProps> = React.memo(({ walletInfo, on
           )}
         </button>
       )}
+
+      {/* Відображення модального вікна */}
+      <Modal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} />
     </div>
   );
 });

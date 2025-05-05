@@ -16,7 +16,10 @@ function App() {
     isConnecting, 
     error: walletError, 
     connectWallet, 
-    disconnectWallet 
+    disconnectWallet,
+    modalMessage,
+    isModalOpen,
+    closeModal 
   } = useWallet();
   
   const { 
@@ -56,6 +59,9 @@ function App() {
         onConnect={connectWallet}
         onDisconnect={disconnectWallet}
         isConnecting={isConnecting}
+        modalMessage={modalMessage}
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
       />
       
       {/* Hero section */}
