@@ -13,6 +13,7 @@ interface HeaderProps {
   isModalOpen: boolean;
   closeModal: () => void;
   onLeaderboardClick?: () => void;
+  onHomePageClick?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = React.memo(({ 
@@ -23,7 +24,8 @@ const Header: React.FC<HeaderProps> = React.memo(({
   modalMessage,
   isModalOpen,
   closeModal,
-  onLeaderboardClick
+  onLeaderboardClick,
+  onHomePageClick
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -40,7 +42,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center" onClick={onHomePageClick}>
             <img src={logo} alt="Logo" className="h-10 w-10 mr-2" />
             <span className="text-white font-bold text-xl">Ua<span className="text-[#00a8ff]">Dep</span></span>
           </div>

@@ -116,6 +116,7 @@ function App() {
         isModalOpen={isModalOpen}
         closeModal={closeModal}
         onLeaderboardClick={handleLeaderboardClick}
+        onHomePageClick={handleBackToHome}
       />
       
       {currentPage === 'home' && (
@@ -216,7 +217,7 @@ function App() {
                           </div>
                           <span className="text-gray-300">Player{index}</span>
                         </div>
-                        <span className="text-[#00f5d4] font-mono">{(6 - index) * 1.5} ETH</span>
+                        <span className="text-[#00f5d4] font-mono">{(6 - index) * 1.5} SOL</span>
                       </div>
                     ))}
                   </div>
