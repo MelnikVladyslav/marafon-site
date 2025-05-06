@@ -12,6 +12,7 @@ interface HeaderProps {
   modalMessage: string;
   isModalOpen: boolean;
   closeModal: () => void;
+  onLeaderboardClick?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = React.memo(({ 
@@ -21,7 +22,8 @@ const Header: React.FC<HeaderProps> = React.memo(({
   isConnecting,
   modalMessage,
   isModalOpen,
-  closeModal 
+  closeModal,
+  onLeaderboardClick
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -51,7 +53,15 @@ const Header: React.FC<HeaderProps> = React.memo(({
             <a href="#mybets" className="text-gray-300 hover:text-white transition-colors" onClick={handleLinkClick}>
               My Bets
             </a>
-            <a href="#leaderboard" className="text-gray-300 hover:text-white transition-colors" onClick={handleLinkClick}>
+            <a 
+              href="#" 
+              className="text-gray-300 hover:text-white transition-colors" 
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick();
+                if (onLeaderboardClick) onLeaderboardClick();
+              }}
+            >
               Leaderboard
             </a>
             <WalletConnect 
@@ -100,9 +110,13 @@ const Header: React.FC<HeaderProps> = React.memo(({
               My Bets
             </a>
             <a 
-              href="#leaderboard" 
+              href="#" 
               className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-[#30363d] rounded-md"
-              onClick={handleLinkClick}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick();
+                if (onLeaderboardClick) onLeaderboardClick();
+              }}
             >
               Leaderboard
             </a>
