@@ -7,10 +7,11 @@ import TokenDisplay from './components/TokenDisplay';
 import TransactionNotification from './components/TransactionNotification';
 import Leaderboard from './components/Leaderboard';
 import TournamentDetails from './components/TournamentDetails';
-import useWallet from './hooks/useWallet';
+import useWalletHook from './hooks/useWallet';
 import useSmartContract from './hooks/useSmartContract';
 import { mockTournaments } from './data/mockData';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
 function App() {
   // Get wallet and smart contract hooks
@@ -23,16 +24,19 @@ function App() {
     modalMessage,
     isModalOpen,
     closeModal 
-  } = useWallet();
+  } = useWalletHook();
   
-  const { 
-    userBets, 
-    isProcessing, 
-    transactionHash, 
+  const {
+    userBets,
+    isProcessing,
+    isLoading,
+    transactionHash,
     error: contractError,
-    placeBet, 
-    withdrawWinnings 
-  } = useSmartContract(walletInfo);
+    contractAddress,
+    placeBet,
+    withdrawWinnings,
+    refreshBets,
+  } = useSmartContract(walletInfo)
   
   // Transaction notification state
   const [showTxNotification, setShowTxNotification] = useState(false);
@@ -90,6 +94,16 @@ function App() {
     // For now, just call the existing bet handler
     handlePlaceBet(tournamentId, teamId, 0.1, odds); // Default amount for simplicity
   };
+
+  // Форматування адреси контракту для відображення
+  const formatAddress = (address: string) => {
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
+  }
+
+  // Отримання URL для Etherscan
+  const getEtherscanUrl = (address: string) => {
+    return `https://sepolia.etherscan.io/address/${address}`
+  }
   
   return (
     <div className="min-h-screen bg-[#0d1117] text-white flex flex-col">
@@ -101,6 +115,7 @@ function App() {
         modalMessage={modalMessage}
         isModalOpen={isModalOpen}
         closeModal={closeModal}
+        onLeaderboardClick={handleLeaderboardClick}
       />
       
       {currentPage === 'home' && (
@@ -160,28 +175,28 @@ function App() {
                   <>
                     {/* Token display widget */}
                     <TokenDisplay tokens={walletInfo.tokens} />
-                    
+
                     {/* Smart Contract Info */}
                     <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
                       <h2 className="text-white text-lg font-semibold mb-4">Smart Contract</h2>
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-gray-400">Betting Contract:</span>
-                          <span className="text-gray-300 font-mono text-sm">0x1234...5678</span>
+                          <span className="text-gray-300 font-mono text-sm">{formatAddress(contractAddress)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Token Contract:</span>
-                          <span className="text-gray-300 font-mono text-sm">0x8765...4321</span>
+                          <span className="text-gray-400">Network:</span>
+                          <span className="text-gray-300 font-mono text-sm">Sepolia Testnet</span>
                         </div>
                         <div className="pt-2">
-                          <a 
-                            href="#" 
+                          <a
+                            href={getEtherscanUrl(contractAddress)}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="text-[#00a8ff] hover:underline text-sm flex items-center"
                           >
-                            View on Etherscan 
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
+                            View on Etherscan
+                            <ExternalLink className="h-4 w-4 ml-1" />
                           </a>
                         </div>
                       </div>

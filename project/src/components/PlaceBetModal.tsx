@@ -111,7 +111,7 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(({ isOpen, onClos
               </div>
               
               <label className="block text-gray-300 text-sm font-medium mb-2">
-                Bet Amount (ETH)
+                Bet Amount (SOL)
               </label>
               <div className="relative rounded-md shadow-sm">
                 <input
@@ -162,7 +162,7 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(({ isOpen, onClos
               <div className="flex justify-between mb-2">
                 <span className="text-gray-400">Potential winnings:</span>
                 <span className="text-white font-mono font-semibold">
-                  {potentialWinnings.toFixed(4)} ETH
+                  {potentialWinnings.toFixed(4)} SOL
                 </span>
               </div>
             </div>
@@ -192,7 +192,7 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(({ isOpen, onClos
               ) : !isWalletConnected ? (
                 'Connect Wallet to Place Bet'
               ) : (
-                `Place Bet (${amount} ETH)`
+                `Place Bet (${amount} SOL)`
               )}
             </button>
           </form>

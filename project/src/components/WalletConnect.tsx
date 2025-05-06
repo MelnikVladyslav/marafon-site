@@ -35,7 +35,7 @@ const WalletConnect: React.FC<WalletConnectProps> = React.memo(({ walletInfo, on
           <div className="bg-[#0d1117] border border-[#30363d] rounded-full py-1 px-3 flex items-center">
             <div className="mr-2 h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
             <span className="text-gray-300 mr-2">{formatAddress(walletInfo.address)}</span>
-            <span className="text-[#00f5d4] font-mono">{walletInfo.balance.toFixed(4)} ETH</span>
+            <span className="text-[#00f5d4] font-mono">{walletInfo.balance.toFixed(4)} SOL</span>
           </div>
           <button
             onClick={handleDisconnect}

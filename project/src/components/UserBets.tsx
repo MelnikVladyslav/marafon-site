@@ -113,7 +113,7 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
                         <p className="text-gray-400 text-sm">Amount</p>
-                        <p className="text-white font-mono font-semibold">{bet.amount.toFixed(4)} ETH</p>
+                        <p className="text-white font-mono font-semibold">{bet.amount.toFixed(4)} SOL</p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Odds</p>
@@ -121,7 +121,7 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Potential Winnings</p>
-                        <p className="text-[#00f5d4] font-mono font-semibold">{potentialWinnings.toFixed(4)} ETH</p>
+                        <p className="text-[#00f5d4] font-mono font-semibold">{potentialWinnings.toFixed(4)} SOL</p>
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Date Placed</p>

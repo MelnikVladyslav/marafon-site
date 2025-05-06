@@ -213,11 +213,11 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                 </div>
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-400">Total Volume</span>
-                  <span className="text-white font-medium">87.5 ETH</span>
+                  <span className="text-white font-medium">87.5 SOL</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Average Bet Size</span>
-                  <span className="text-white font-medium">0.07 ETH</span>
+                  <span className="text-white font-medium">0.07 SOL</span>
                 </div>
               </div>
               
@@ -270,7 +270,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                         <div className="text-gray-400 text-xs">{index % 2 === 0 ? tournament.teams[0].name : tournament.teams[1].name}</div>
                       </div>
                     </div>
-                    <div className="text-[#00f5d4] font-mono text-sm">{(0.05 + index * 0.02).toFixed(2)} ETH</div>
+                    <div className="text-[#00f5d4] font-mono text-sm">{(0.05 + index * 0.02).toFixed(2)} SOL</div>
                   </div>
                 ))}
               </div>

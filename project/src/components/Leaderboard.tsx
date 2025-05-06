@@ -101,7 +101,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
         <div className="grid grid-cols-12 bg-[#0d1117] p-4 border-b border-[#30363d] text-gray-400 font-medium">
           <div className="col-span-1 text-center">#</div>
           <div className="col-span-5">Player</div>
-          <div className="col-span-3 text-right">Winnings (ETH)</div>
+          <div className="col-span-3 text-right">Winnings (SOL)</div>
           <div className="col-span-3 text-right">Win Rate</div>
         </div>
         
