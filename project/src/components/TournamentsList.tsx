@@ -8,12 +8,14 @@ interface TournamentsListProps {
   tournaments: Tournament[];
   onPlaceBet: (tournamentId: string, teamId: string, amount: number, odds: number) => Promise<string | null>;
   isWalletConnected: boolean;
+  onTournamentClick?: (tournamentId: string) => void;
 }
 
 const TournamentsList: React.FC<TournamentsListProps> = memo(({ 
   tournaments, 
   onPlaceBet,
-  isWalletConnected
+  isWalletConnected,
+  onTournamentClick
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -121,11 +123,16 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(({
       {filteredTournaments.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTournaments.map(tournament => (
-            <TournamentCard
-              key={tournament.id}
-              tournament={tournament}
-              onPlaceBet={handleOpenBetModal}
-            />
+            <div 
+              key={tournament.id} 
+              onClick={() => onTournamentClick && onTournamentClick(tournament.id)}
+              className={`cursor-pointer ${onTournamentClick ? 'hover:scale-[1.03] transition-transform' : ''}`}
+            >
+              <TournamentCard
+                tournament={tournament}
+                onPlaceBet={handleOpenBetModal}
+              />
+            </div>
           ))}
         </div>
       ) : (
