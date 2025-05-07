@@ -1,206 +1,210 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { ethers } from 'ethers';
-import type { Bet, WalletInfo } from '../types';
-import Betting from '../../Betting.json';
+"use client"
 
-// Адреса контракту в мережі Sepolia
-const CONTRACT_ADDRESS = "0x2222222222222222222222222222222222222222";
+import { useState, useEffect, useCallback, useMemo } from "react"
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  clusterApiUrl,
+  LAMPORTS_PER_SOL,
+  TransactionInstruction,
+} from "@solana/web3.js"
+import type { Bet, WalletInfo } from "../types"
+
+// Solana program ID (replace with your actual deployed program ID)
+const PROGRAM_ID = "BETTxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 export const useSmartContract = (walletInfo: WalletInfo) => {
-  const [userBets, setUserBets] = useState<Bet[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [contractAddress, setContractAddress] = useState<string>(CONTRACT_ADDRESS);
+  const [userBets, setUserBets] = useState<Bet[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [transactionHash, setTransactionHash] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [programId] = useState<string>(PROGRAM_ID)
+  const [connection, setConnection] = useState<Connection | null>(null)
 
-  const memoizedUserBets = useMemo(() => userBets, [userBets]);
+  const memoizedUserBets = useMemo(() => userBets, [userBets])
 
-  // Отримання контракту
-  const getContract = useCallback(async () => {
-    if (!walletInfo.connected || !window.ethereum) {
-      throw new Error("Wallet not connected");
-    }
+  // Initialize Solana connection
+  useEffect(() => {
+    const conn = new Connection(clusterApiUrl("devnet"))
+    setConnection(conn)
+  }, [])
 
-    const provider = new ethers.BrowserProvider(window.ethereum); // Використовуйте BrowserProvider
-    const signer = await provider.getSigner(); // Отримайте підписувача
-    return new ethers.Contract(contractAddress, Betting.abi, signer);
-  }, [walletInfo.connected, contractAddress]);
-
-  // Завантаження ставок користувача з блокчейну
+  // Load user bets from the program
   const loadUserBets = useCallback(async () => {
-    if (!walletInfo.connected || !walletInfo.address) return;
+    if (!walletInfo.connected || !walletInfo.address || !connection) return
 
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
-      const contract = await getContract();
+      // In a real implementation, you would fetch account data from your Solana program
+      // This is a simplified mock implementation
+      console.log("Loading bets for address:", walletInfo.address)
 
-      // Отримуємо всі ставки користувача з блокчейну
-      const userBetsFromChain = await contract.getUserBets(walletInfo.address);
+      // Mock data - in a real implementation, you would deserialize data from your program
+      const mockBetsFromChain: Bet[] = [
+        {
+          id: "sol-bet-1",
+          tournamentId: "1",
+          teamId: "2",
+          amount: 0.5,
+          odds: 2.5,
+          timestamp: new Date().toISOString(),
+          status: "pending",
+        },
+        {
+          id: "sol-bet-2",
+          tournamentId: "3",
+          teamId: "5",
+          amount: 0.2,
+          odds: 1.8,
+          timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          status: "won",
+        },
+      ]
 
-      // Перетворюємо дані з блокчейну у формат, який використовується в додатку
-      const formattedBets: Bet[] = userBetsFromChain.map((bet: any) => ({
-        id: bet.id.toString(),
-        tournamentId: bet.tournamentId.toString(),
-        teamId: bet.teamId.toString(),
-        amount: Number.parseFloat(ethers.utils.formatEther(bet.amount)),
-        odds: Number.parseFloat(ethers.utils.formatUnits(bet.odds, 2)),
-        timestamp: new Date(bet.timestamp.toNumber() * 1000).toISOString(),
-        status: bet.status === 0 ? "pending" : bet.status === 1 ? "won" : "lost",
-      }));
-
-      setUserBets(formattedBets);
+      setUserBets(mockBetsFromChain)
     } catch (err) {
-      console.error("Failed to load user bets:", err);
-      setError("Failed to load your bets. Please try again.");
+      console.error("Failed to load user bets:", err)
+      setError("Failed to load your bets. Please try again.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, [walletInfo.connected, walletInfo.address, getContract]);
+  }, [walletInfo.connected, walletInfo.address, connection])
 
-  // Завантажуємо ставки при підключенні гаманця
+  // Load bets when wallet connects
   useEffect(() => {
     if (walletInfo.connected) {
-      loadUserBets();
+      loadUserBets()
     }
-  }, [walletInfo.connected, loadUserBets]);
+  }, [walletInfo.connected, loadUserBets])
 
-  // Підписка на події контракту
-  useEffect(() => {
-    const setupEventListeners = async () => {
-      if (!walletInfo.connected) return;
-
-      try {
-        const contract = await getContract();
-
-        // Підписуємось на подію нової ставки
-        contract.on("BetPlaced", (user, betId, tournamentId, teamId, amount, odds) => {
-          if (user.toLowerCase() === walletInfo.address.toLowerCase()) {
-            const newBet: Bet = {
-              id: betId.toString(),
-              tournamentId: tournamentId.toString(),
-              teamId: teamId.toString(),
-              amount: Number.parseFloat(ethers.utils.formatEther(amount)),
-              odds: Number.parseFloat(ethers.utils.formatUnits(odds, 2)),
-              timestamp: new Date().toISOString(),
-              status: "pending",
-            };
-
-            setUserBets((prev) => [newBet, ...prev]);
-          }
-        });
-
-        // Підписуємось на подію оновлення статусу ставки
-        contract.on("BetStatusUpdated", (betId, status) => {
-          setUserBets((prev) =>
-            prev.map((bet) => (bet.id === betId.toString() ? { ...bet, status: status === 1 ? "won" : "lost" } : bet)),
-          );
-        });
-
-        // Підписуємось на подію виведення виграшу
-        contract.on("WinningsWithdrawn", (user, betId, amount) => {
-          if (user.toLowerCase() === walletInfo.address.toLowerCase()) {
-            // Оновлюємо статус ставки після виведення виграшу
-            setUserBets((prev) => prev.map((bet) => (bet.id === betId.toString() ? { ...bet, status: "won" } : bet)));
-          }
-        });
-
-        return () => {
-          // Відписуємось від подій при розмонтуванні компонента
-          contract.removeAllListeners();
-        };
-      } catch (err) {
-        console.error("Failed to setup event listeners:", err);
-      }
-    };
-
-    setupEventListeners();
-  }, [walletInfo.connected, walletInfo.address, getContract]);
-
-  // Обробка ставок та виведення виграшів
+  // Handle bet placement and withdrawal
   const handleBet = useCallback(
     async (action: "place" | "withdraw", betDetails: any) => {
-      if (!walletInfo.connected) {
-        setError("Гаманець не підключено. Будь ласка, підключіть гаманець спочатку.");
-        return null;
+      if (!walletInfo.connected || !connection) {
+        setError("Wallet not connected. Please connect your wallet first.")
+        return null
       }
 
-      setIsProcessing(true);
-      setError(null);
+      setIsProcessing(true)
+      setError(null)
 
       try {
-        const contract = await getContract();
-        let tx;
+        // Create a new transaction
+        const transaction = new Transaction()
 
         if (action === "place") {
-          // Конвертуємо суму ставки в wei
-          const amountInWei = parseFloat(betDetails.amount) * Number(10 ** 18);
+          // Convert amount to lamports
+          const lamports = betDetails.amount * LAMPORTS_PER_SOL
 
-          // Конвертуємо коефіцієнт у формат з двома десятковими знаками
-          const oddsFormatted = Math.round(betDetails.odds * 100);
+          // In a real implementation, you would create a proper instruction to your program
+          // This is a simplified example
+          const programId = new PublicKey(PROGRAM_ID)
 
-          // Викликаємо метод контракту для розміщення ставки
-          tx = await contract.placeBet(betDetails.tournamentId, betDetails.teamId, amountInWei, oddsFormatted, {
-            // Додаємо газліміт для запобігання помилок
-            gasLimit: 300000,
-          });
+          // Create instruction data buffer
+          // Format: [action, tournamentId, teamId, amount, odds]
+          const data = Buffer.from([
+            0, // action: place bet
+            Number(betDetails.tournamentId),
+            Number(betDetails.teamId),
+            ...new Uint8Array(new Float64Array([lamports]).buffer),
+            ...new Uint8Array(new Float64Array([betDetails.odds * 100]).buffer),
+          ])
 
-          // Чекаємо підтвердження транзакції
-          await tx.wait();
+          // Create the instruction
+          const instruction = new TransactionInstruction({
+            keys: [{ pubkey: new PublicKey(walletInfo.address), isSigner: true, isWritable: true }],
+            programId,
+            data,
+          })
 
-          // Додаємо нову ставку до локального стану
-          // Реальні дані прийдуть через подію BetPlaced
-          const newBet: Bet = {
-            id: `pending-${Date.now()}`,
-            tournamentId: betDetails.tournamentId,
-            teamId: betDetails.teamId,
-            amount: betDetails.amount,
-            odds: betDetails.odds,
-            timestamp: new Date().toISOString(),
-            status: "pending",
-          };
+          transaction.add(instruction)
 
-          setUserBets((prev) => [newBet, ...prev]);
+          // For demo purposes, we'll just add a simple transfer
+          // In a real implementation, you would call your program
+          transaction.add(
+            SystemProgram.transfer({
+              fromPubkey: new PublicKey(walletInfo.address),
+              toPubkey: new PublicKey(programId),
+              lamports: lamports,
+            }),
+          )
         } else if (action === "withdraw") {
-          // Викликаємо метод контракту для виведення виграшу
-          tx = await contract.withdrawWinnings(betDetails.betId, {
-            gasLimit: 300000,
-          });
+          // Similar to place bet, but with different action code
+          // In a real implementation, you would create a proper instruction to your program
+          const programId = new PublicKey(PROGRAM_ID)
 
-          // Чекаємо підтвердження транзакції
-          await tx.wait();
+          // Create instruction data buffer
+          // Format: [action, betId]
+          const data = Buffer.from([
+            1, // action: withdraw
+            ...Buffer.from(betDetails.betId),
+          ])
 
-          // Оновлюємо статус ставки локально
-          // Реальні дані прийдуть через подію WinningsWithdrawn
-          setUserBets((prev) => prev.map((bet) => (bet.id === betDetails.betId ? { ...bet, status: "won" } : bet)));
+          // Create the instruction
+          const instruction = new TransactionInstruction({
+            keys: [{ pubkey: new PublicKey(walletInfo.address), isSigner: true, isWritable: true }],
+            programId,
+            data,
+          })
+
+          transaction.add(instruction)
         }
 
-        setTransactionHash(tx.hash);
-        return tx.hash;
+        // Send the transaction
+        if (window.solana && window.solana.isConnected) {
+          // Sign and send the transaction
+          const { signature } = await window.solana.signAndSendTransaction(transaction)
+
+          // Wait for confirmation
+          await connection.confirmTransaction(signature)
+
+          setTransactionHash(signature)
+
+          // Update local state
+          if (action === "place") {
+            const newBet: Bet = {
+              id: `pending-${Date.now()}`,
+              tournamentId: betDetails.tournamentId,
+              teamId: betDetails.teamId,
+              amount: betDetails.amount,
+              odds: betDetails.odds,
+              timestamp: new Date().toISOString(),
+              status: "pending",
+            }
+
+            setUserBets((prev) => [newBet, ...prev])
+          } else if (action === "withdraw") {
+            setUserBets((prev) => prev.map((bet) => (bet.id === betDetails.betId ? { ...bet, status: "won" } : bet)))
+          }
+
+          return signature
+        }
+
+        return null
       } catch (err: any) {
-        console.error("Smart contract error:", err);
+        console.error("Smart contract error:", err)
 
-        // Більш детальне повідомлення про помилку
         const errorMessage =
-          err.reason ||
-          err.message ||
-          `Не вдалося ${action === "place" ? "розмістити ставку" : "вивести виграш"}. Спробуйте ще раз.`;
-        setError(errorMessage);
+          err.message || `Failed to ${action === "place" ? "place bet" : "withdraw winnings"}. Please try again.`
+        setError(errorMessage)
 
-        return null;
+        return null
       } finally {
-        setIsProcessing(false);
+        setIsProcessing(false)
       }
     },
-    [walletInfo, getContract],
-  );
+    [walletInfo, connection],
+  )
 
-  // Функція для оновлення даних
+  // Function to refresh data
   const refreshBets = useCallback(() => {
-    loadUserBets();
-  }, [loadUserBets]);
+    loadUserBets()
+  }, [loadUserBets])
 
   return {
     userBets: memoizedUserBets,
@@ -208,12 +212,12 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
     isLoading,
     transactionHash,
     error,
-    contractAddress,
+    contractAddress: programId,
     placeBet: (tournamentId: string, teamId: string, amount: number, odds: number) =>
       handleBet("place", { tournamentId, teamId, amount, odds }),
     withdrawWinnings: (betId: string) => handleBet("withdraw", { betId }),
     refreshBets,
-  };
-};
+  }
+}
 
-export default useSmartContract;
+export default useSmartContract

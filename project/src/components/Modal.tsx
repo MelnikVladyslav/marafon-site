@@ -1,13 +1,15 @@
-import React from 'react';
+"use client"
+
+import type React from "react"
 
 interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  message: string;
+  isOpen: boolean
+  onClose: () => void
+  message: string
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, message }) => {
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -19,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, message }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Modal;
+export default Modal

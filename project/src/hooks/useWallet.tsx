@@ -1,81 +1,113 @@
-import { useState, useEffect, useCallback } from 'react';
-import { WalletInfo } from '../types';
-import Modal from '../components/Modal';
+"use client"
+
+import { useState, useCallback, useEffect } from "react"
+import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js"
+import type { WalletInfo } from "../types"
+
+// Define Solana network - using devnet for development
+const SOLANA_NETWORK = clusterApiUrl("devnet")
 
 export const useWallet = () => {
   const [walletInfo, setWalletInfo] = useState<WalletInfo>({
-    address: '',
+    address: "",
     connected: false,
     balance: 0,
-  });
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [modalMessage, setModalMessage] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    tokens: [],
+  })
+  const [isConnecting, setIsConnecting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [modalMessage, setModalMessage] = useState<string>("")
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const [connection, setConnection] = useState<Connection | null>(null)
 
-  // Check if wallet is available in window object (MetaMask)
+  // Initialize Solana connection
+  useEffect(() => {
+    const conn = new Connection(SOLANA_NETWORK)
+    setConnection(conn)
+  }, [])
+
+  // Check if Phantom wallet is available
   const checkWalletAvailability = useCallback(() => {
-    return typeof window !== 'undefined' && window.ethereum !== undefined;
-  }, []);
+    const isPhantomInstalled = typeof window !== "undefined" && window.solana && window.solana.isPhantom
+    return isPhantomInstalled
+  }, [])
 
   // Connect wallet function
   const connectWallet = useCallback(async () => {
-    console.log('Connecting to wallet...');
+    console.log("Connecting to Solana wallet...")
     if (!checkWalletAvailability()) {
-      setError('MetaMask is not installed. Please install it to use this feature.');
-      setModalMessage('MetaMask is not installed. Please install it to use this feature.');
-      setIsModalOpen(true);
-      return;
+      setError("Phantom wallet is not installed. Please install it to use this feature.")
+      setModalMessage("Phantom wallet is not installed. Please install it to use this feature.")
+      setIsModalOpen(true)
+      return
     }
-  
-    setIsConnecting(true);
-    setError(null);
-    
+
+    setIsConnecting(true)
+    setError(null)
+
     try {
-      // Request account access
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      console.log('Accounts:', accounts);
-      const account = accounts[0];
-  
-      // Get balance
-      const balance = await window.ethereum.request({
-        method: 'eth_getBalance',
-        params: [account, 'latest'],
-      });
-      console.log('Balance:', balance); // Додайте це для перевірки
-  
-      const weiToEther = (wei: string) => {
-        return parseFloat(wei) / Math.pow(10, 18); // 1 Ether = 10^18 Wei
-      };
-      
-      setWalletInfo({
-        address: account,
-        connected: true,
-        balance: weiToEther(balance),
-      });
-      setModalMessage('Wallet connected successfully!');
-      setIsModalOpen(true);
+      // Request connection to Phantom wallet
+      const resp = await window.solana.connect()
+      console.log("Connected to wallet:", resp.publicKey.toString())
+
+      // Get wallet public key
+      const publicKey = new PublicKey(resp.publicKey.toString())
+
+      // Get SOL balance
+      if (connection) {
+        const balance = await connection.getBalance(publicKey)
+        console.log("Balance (lamports):", balance)
+
+        // Convert lamports to SOL (1 SOL = 10^9 lamports)
+        const solBalance = balance / 1_000_000_000
+
+        setWalletInfo({
+          address: publicKey.toString(),
+          connected: true,
+          balance: solBalance,
+          tokens: [
+            {
+              name: "Solana",
+              symbol: "SOL",
+              balance: solBalance,
+              address: "native",
+            },
+          ],
+        })
+        setModalMessage("Wallet connected successfully!")
+        setIsModalOpen(true)
+      }
     } catch (err) {
-      setError('Failed to connect wallet. Please try again.');
-      setModalMessage('Failed to connect wallet. Please try again.');
-      setIsModalOpen(true);
+      console.error("Failed to connect wallet:", err)
+      setError("Failed to connect wallet. Please try again.")
+      setModalMessage("Failed to connect wallet. Please try again.")
+      setIsModalOpen(true)
     } finally {
-      setIsConnecting(false);
+      setIsConnecting(false)
     }
-  }, [checkWalletAvailability]);
+  }, [checkWalletAvailability, connection])
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   // Disconnect wallet function
-  const disconnectWallet = useCallback(() => {
-    setWalletInfo({
-      address: '',
-      connected: false,
-      balance: 0,
-    });
-  }, []);
+  const disconnectWallet = useCallback(async () => {
+    try {
+      if (window.solana && window.solana.isConnected) {
+        await window.solana.disconnect()
+      }
+
+      setWalletInfo({
+        address: "",
+        connected: false,
+        balance: 0,
+        tokens: [],
+      })
+    } catch (err) {
+      console.error("Error disconnecting wallet:", err)
+    }
+  }, [])
 
   return {
     walletInfo,
@@ -86,8 +118,8 @@ export const useWallet = () => {
     disconnectWallet,
     modalMessage,
     isModalOpen,
-    closeModal
-  };
-};
+    closeModal,
+  }
+}
 
-export default useWallet;
+export default useWallet
