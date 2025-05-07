@@ -1,4 +1,11 @@
+<<<<<<< Updated upstream
 import React from 'react';
+=======
+"use client"
+
+import type React from "react"
+import { useLanguage } from "../context/LanguageContext"
+>>>>>>> Stashed changes
 
 interface Leader {
   id: string;
@@ -76,6 +83,7 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
+  const { t } = useLanguage()
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
@@ -87,22 +95,28 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
           </svg>
-          Back to Tournaments
+          {t('backToTournaments')}
         </button>
       )}
       
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
-        <p className="text-gray-400">Top performers in crypto esports betting</p>
+        <h1 className="text-3xl font-bold text-white mb-2">{t('leaderboardTitle')}</h1>
+        <p className="text-gray-400">{t('topPerformers')}</p>
       </div>
       
       <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
         {/* Table header */}
         <div className="grid grid-cols-12 bg-[#0d1117] p-4 border-b border-[#30363d] text-gray-400 font-medium">
           <div className="col-span-1 text-center">#</div>
+<<<<<<< Updated upstream
           <div className="col-span-5">Player</div>
           <div className="col-span-3 text-right">Winnings (ETH)</div>
           <div className="col-span-3 text-right">Win Rate</div>
+=======
+          <div className="col-span-5">{t('player')}</div>
+          <div className="col-span-3 text-right">{t('winnings')}</div>
+          <div className="col-span-3 text-right">{t('winRate')}</div>
+>>>>>>> Stashed changes
         </div>
         
         {/* Table body */}
@@ -132,23 +146,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
       </div>
       
       <div className="mt-8 bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-        <h2 className="text-xl font-bold text-white mb-4">How to Join the Leaderboard</h2>
+        <h2 className="text-xl font-bold text-white mb-4">{t('howToJoinLeaderboard')}</h2>
         <ul className="space-y-3 text-gray-300">
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>Connect your wallet and place bets on tournaments</p>
+            <p>{t('connectAndPlaceBets')}</p>
           </li>
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>Win more bets to increase your win rate</p>
+            <p>{t('winMoreBets')}</p>
           </li>
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>The leaderboard is updated daily based on your performance</p>
+            <p>{t('leaderboardUpdatedDaily')}</p>
           </li>
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>Top performers may receive special rewards and bonuses</p>
+            <p>{t('topPerformersRewards')}</p>
           </li>
         </ul>
       </div>

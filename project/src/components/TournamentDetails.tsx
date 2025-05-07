@@ -1,6 +1,16 @@
+<<<<<<< Updated upstream
 import React, { useCallback } from 'react';
 import { Tournament } from '../types';
 import { Clock, Award, ArrowLeft, Users, Calendar, Trophy } from 'lucide-react';
+=======
+"use client"
+
+import type React from "react"
+import { useCallback } from "react"
+import type { Tournament } from "../types"
+import { Award, ArrowLeft, Users, Calendar, Trophy } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
+>>>>>>> Stashed changes
 
 interface TournamentDetailsProps {
   tournament: Tournament;
@@ -9,6 +19,7 @@ interface TournamentDetailsProps {
 }
 
 const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBack, onPlaceBet }) => {
+  const { t } = useLanguage()
   // Format date for display
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
@@ -48,7 +59,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
         className="flex items-center text-gray-400 hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
-        Back to Tournaments
+        {t('backToTournaments')}
       </button>
       
       {/* Tournament header */}
@@ -62,7 +73,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
         <div className="absolute bottom-0 left-0 w-full p-6">
           <div className="flex items-center mb-2">
             <span className={`text-xs px-2 py-1 rounded-full ${getStatusStyles()} mr-3`}>
-              {tournament.status.toUpperCase()}
+              {t(tournament.status).toUpperCase()}
             </span>
             <span className="text-gray-300 text-sm">{tournament.game.name}</span>
           </div>
@@ -76,7 +87,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Teams and betting */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Teams</h2>
+              <h2 className="text-xl font-bold text-white">{t('teams')}</h2>
             </div>
             
             <div className="p-6">
@@ -92,7 +103,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                   </div>
                   <div>
                     <h3 className="text-white text-xl font-bold">{tournament.teams[0].name}</h3>
-                    <p className="text-gray-400">Team ID: {tournament.teams[0].id}</p>
+                    <p className="text-gray-400">{t('teamId')}: {tournament.teams[0].id}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -105,7 +116,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                     )}
                     className="bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6] text-black font-semibold py-2 px-6 rounded-lg transition-all transform hover:scale-105"
                   >
-                    Place Bet
+                    {t('placeBet')}
                   </button>
                 </div>
               </div>
@@ -113,7 +124,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
               {/* VS divider */}
               <div className="flex items-center justify-center my-6">
                 <div className="h-px bg-[#30363d] flex-grow"></div>
-                <div className="px-4 text-gray-400 font-bold">VS</div>
+                <div className="px-4 text-gray-400 font-bold">{t('vs')}</div>
                 <div className="h-px bg-[#30363d] flex-grow"></div>
               </div>
               
@@ -129,7 +140,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                   </div>
                   <div>
                     <h3 className="text-white text-xl font-bold">{tournament.teams[1].name}</h3>
-                    <p className="text-gray-400">Team ID: {tournament.teams[1].id}</p>
+                    <p className="text-gray-400">{t('teamId')}: {tournament.teams[1].id}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -142,7 +153,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                     )}
                     className="bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6] text-black font-semibold py-2 px-6 rounded-lg transition-all transform hover:scale-105"
                   >
-                    Place Bet
+                    {t('placeBet')}
                   </button>
                 </div>
               </div>
@@ -152,20 +163,24 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Tournament description */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Tournament Details</h2>
+              <h2 className="text-xl font-bold text-white">{t('tournamentDetailsTitle')}</h2>
             </div>
             <div className="p-6">
               <p className="text-gray-300 mb-6">
+<<<<<<< Updated upstream
                 {tournament.name} is a premier esports event featuring top teams competing for glory and prizes. 
                 This tournament showcases the best talent in {tournament.game.name} and promises exciting matches 
                 and unforgettable moments for fans and bettors alike.
+=======
+                {tournament.name} {t('tournamentDescription1')} {tournament.game.name} {t('tournamentDescription2')}
+>>>>>>> Stashed changes
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Start Time</div>
+                    <div className="text-gray-400 text-sm">{t('startTime')}</div>
                     <div className="text-white">{formatDate(tournament.startTime)}</div>
                   </div>
                 </div>
@@ -173,7 +188,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                 <div className="flex items-center">
                   <Trophy className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Prize Pool</div>
+                    <div className="text-gray-400 text-sm">{t('prizePool')}</div>
                     <div className="text-white">$1,000,000</div>
                   </div>
                 </div>
@@ -181,16 +196,16 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                 <div className="flex items-center">
                   <Users className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Teams</div>
-                    <div className="text-white">2 Teams</div>
+                    <div className="text-gray-400 text-sm">{t('teamsCount')}</div>
+                    <div className="text-white">2 {t('teams').toLowerCase()}</div>
                   </div>
                 </div>
                 
                 <div className="flex items-center">
                   <Award className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Format</div>
-                    <div className="text-white">Best of 5</div>
+                    <div className="text-gray-400 text-sm">{t('format')}</div>
+                    <div className="text-white">{t('bestOf5')}</div>
                   </div>
                 </div>
               </div>
@@ -203,27 +218,41 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Betting Stats */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Betting Stats</h2>
+              <h2 className="text-xl font-bold text-white">{t('bettingStats')}</h2>
             </div>
             <div className="p-6 space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-400">Total Bets Placed</span>
+                  <span className="text-gray-400">{t('totalBets')}</span>
                   <span className="text-white font-medium">1,245</span>
                 </div>
                 <div className="flex justify-between mb-2">
+<<<<<<< Updated upstream
                   <span className="text-gray-400">Total Volume</span>
                   <span className="text-white font-medium">87.5 ETH</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Average Bet Size</span>
                   <span className="text-white font-medium">0.07 ETH</span>
+=======
+                  <span className="text-gray-400">{t('totalVolume')}</span>
+                  <span className="text-white font-medium">87.5 SOL</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">{t('averageBetSize')}</span>
+                  <span className="text-white font-medium">0.07 SOL</span>
+>>>>>>> Stashed changes
                 </div>
               </div>
               
               <div className="pt-4 border-t border-[#30363d]">
+<<<<<<< Updated upstream
                 <h3 className="text-white font-medium mb-3">Betting Distribution</h3>
                 
+=======
+                <h3 className="text-white font-medium mb-3">{t('bettingTrends')}</h3>
+
+>>>>>>> Stashed changes
                 {/* Team 1 distribution */}
                 <div className="mb-3">
                   <div className="flex justify-between mb-1">
@@ -258,7 +287,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Recent Bets */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Recent Bets</h2>
+              <h2 className="text-xl font-bold text-white">{t('yourBets')}</h2>
             </div>
             <div className="p-4">
               <div className="space-y-4">

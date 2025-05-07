@@ -1,8 +1,20 @@
+<<<<<<< Updated upstream
 import React, { useState, memo } from 'react';
 import { Tournament } from '../types';
 import TournamentCard from './TournamentCard';
 import PlaceBetModal from './PlaceBetModal';
 import { Search, Filter } from 'lucide-react';
+=======
+"use client"
+
+import type React from "react"
+import { useState, memo } from "react"
+import type { Tournament } from "../types"
+import TournamentCard from "./TournamentCard"
+import PlaceBetModal from "./PlaceBetModal"
+import { Search } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
+>>>>>>> Stashed changes
 
 interface TournamentsListProps {
   tournaments: Tournament[];
@@ -11,6 +23,7 @@ interface TournamentsListProps {
   onTournamentClick?: (tournamentId: string) => void;
 }
 
+<<<<<<< Updated upstream
 const TournamentsList: React.FC<TournamentsListProps> = memo(({ 
   tournaments, 
   onPlaceBet,
@@ -29,6 +42,14 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(({
     teamName: string;
     odds: number;
   } | null>(null);
+=======
+const TournamentsList: React.FC<TournamentsListProps> = memo(
+  ({ tournaments, onPlaceBet, isWalletConnected, onTournamentClick }) => {
+    const { t } = useLanguage()
+    const [searchTerm, setSearchTerm] = useState("")
+    const [selectedGame, setSelectedGame] = useState<string | null>(null)
+    const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+>>>>>>> Stashed changes
 
   // Filter tournaments
   const filteredTournaments = tournaments.filter(tournament => {
@@ -73,6 +94,7 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(({
     return null;
 };
 
+<<<<<<< Updated upstream
   return (
     <div>
       <div className="mb-6">
@@ -83,6 +105,52 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(({
           <div className="relative flex-grow">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
+=======
+    return (
+      <div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-white mb-4">{t('tournaments')}</h2>
+
+          {/* Filters */}
+          <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="relative flex-grow">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder={`${t('search')}...`}
+                className="bg-[#0d1117] border border-[#30363d] text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#00a8ff] focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <select
+                className="bg-[#0d1117] border border-[#30363d] text-white rounded-lg px-4 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#00a8ff]"
+                value={selectedGame || ""}
+                onChange={(e) => setSelectedGame(e.target.value || null)}
+              >
+                <option value="">{t('allGames')}</option>
+                {gameOptions.map((game) => (
+                  <option key={game.id} value={game.id}>
+                    {game.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className="bg-[#0d1117] border border-[#30363d] text-white rounded-lg px-4 py-2 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#00a8ff]"
+                value={selectedStatus || ""}
+                onChange={(e) => setSelectedStatus(e.target.value || null)}
+              >
+                <option value="">{t('allStatus')}</option>
+                <option value="live">{t('live')}</option>
+                <option value="upcoming">{t('upcoming')}</option>
+                <option value="completed">{t('completed')}</option>
+              </select>
+>>>>>>> Stashed changes
             </div>
             <input
               type="text"
@@ -117,6 +185,40 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(({
             </select>
           </div>
         </div>
+<<<<<<< Updated upstream
+=======
+
+        {/* Tournaments grid */}
+        {filteredTournaments.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredTournaments.map((tournament) => (
+              <div
+                key={tournament.id}
+                onClick={() => onTournamentClick && onTournamentClick(tournament.id)}
+                className={`cursor-pointer ${onTournamentClick ? "hover:scale-[1.03] transition-transform" : ""}`}
+              >
+                <TournamentCard tournament={tournament} onPlaceBet={handleOpenBetModal} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-8 text-center">
+            <p className="text-gray-400">{t('noTournamentsFound')}</p>
+          </div>
+        )}
+
+        {/* Place bet modal */}
+        {selectedBet && (
+          <PlaceBetModal
+            isOpen={isBetModalOpen}
+            onClose={() => setIsBetModalOpen(false)}
+            teamName={selectedBet.teamName}
+            odds={selectedBet.odds}
+            onPlaceBet={handlePlaceBet}
+            isWalletConnected={isWalletConnected}
+          />
+        )}
+>>>>>>> Stashed changes
       </div>
       
       {/* Tournaments grid */}

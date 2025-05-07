@@ -1,6 +1,15 @@
+<<<<<<< Updated upstream
 import React, { useState, useCallback } from 'react';
 import { Tournament } from '../types';
 import { Clock, Award } from 'lucide-react';
+=======
+"use client"
+
+import React, { useCallback } from "react"
+import type { Tournament } from "../types"
+import { Clock } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
+>>>>>>> Stashed changes
 
 interface TournamentCardProps {
   tournament: Tournament;
@@ -8,8 +17,10 @@ interface TournamentCardProps {
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, onPlaceBet }) => {
+  const { t, language } = useLanguage()
   // Format date for display
   const formatDate = useCallback((dateString: string) => {
+<<<<<<< Updated upstream
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
       month: 'short',
@@ -18,6 +29,16 @@ const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, 
       minute: '2-digit'
     });
   }, []);
+=======
+    const date = new Date(dateString)
+    return date.toLocaleString(language === 'uk' ? 'uk-UA' : 'en-US', {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }, [language])
+>>>>>>> Stashed changes
 
   // Status badge styles based on status
   const getStatusStyles = useCallback(() => {
@@ -50,7 +71,7 @@ const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, 
         <div className="absolute bottom-2 left-3 flex items-center">
           <span className="text-white font-semibold text-lg">{tournament.game.name}</span>
           <span className={`ml-2 text-xs px-2 py-1 rounded-full ${getStatusStyles()}`}>
-            {tournament.status.toUpperCase()}
+            {t(tournament.status).toUpperCase()}
           </span>
         </div>
       </div>

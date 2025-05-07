@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -11,8 +12,29 @@ import useWallet from './hooks/useWallet';
 import useSmartContract from './hooks/useSmartContract';
 import { mockTournaments } from './data/mockData';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+=======
+"use client"
+
+import { useState } from "react"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
+import TournamentsList from "./components/TournamentsList"
+import UserBets from "./components/UserBets"
+import TokenDisplay from "./components/TokenDisplay"
+import TransactionNotification from "./components/TransactionNotification"
+import Leaderboard from "./components/Leaderboard"
+import TournamentDetails from "./components/TournamentDetails"
+import useWalletHook from "./hooks/useWallet"
+import useSmartContract from "./hooks/useSmartContract"
+import { mockTournaments } from "./data/mockData"
+import { ExternalLink } from "lucide-react"
+import { useLanguage } from "./context/LanguageContext"
+>>>>>>> Stashed changes
 
 function App() {
+  // Get language context
+  const { t } = useLanguage()
+  
   // Get wallet and smart contract hooks
   const { 
     walletInfo, 
@@ -110,11 +132,19 @@ function App() {
             <div className="absolute inset-0 bg-gradient-to-r from-[#00a8ff]/20 to-[#9d4edd]/20"></div>
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
               <div className="text-center">
+<<<<<<< Updated upstream
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#00a8ff] to-[#00f5d4]">
                   Crypto Esports Betting
                 </h1>
                 <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
                   Connect your wallet, place bets on your favorite teams, and win crypto
+=======
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#9945FF] to-[#14F195]">
+                  {t('solanaEsportsBetting')}
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                  {t('connectWalletPlaceBets')}
+>>>>>>> Stashed changes
                 </p>
                 {!walletInfo.connected && (
                   <button
@@ -122,7 +152,11 @@ function App() {
                     disabled={isConnecting}
                     className="bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6] text-black font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105"
                   >
+<<<<<<< Updated upstream
                     {isConnecting ? 'Connecting...' : 'Connect Wallet to Start'}
+=======
+                    {isConnecting ? t('connecting') : t('connectWalletToStart')}
+>>>>>>> Stashed changes
                   </button>
                 )}
               </div>
@@ -163,6 +197,7 @@ function App() {
                     
                     {/* Smart Contract Info */}
                     <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
+<<<<<<< Updated upstream
                       <h2 className="text-white text-lg font-semibold mb-4">Smart Contract</h2>
                       <div className="space-y-2">
                         <div className="flex justify-between">
@@ -172,16 +207,32 @@ function App() {
                         <div className="flex justify-between">
                           <span className="text-gray-400">Token Contract:</span>
                           <span className="text-gray-300 font-mono text-sm">0x8765...4321</span>
+=======
+                      <h2 className="text-white text-lg font-semibold mb-4">{t('programInfo')}</h2>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{t('bettingProgram')}</span>
+                          <span className="text-gray-300 font-mono text-sm">{formatAddress(contractAddress)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">{t('network')}</span>
+                          <span className="text-gray-300 font-mono text-sm">{t('solanaDevnet')}</span>
+>>>>>>> Stashed changes
                         </div>
                         <div className="pt-2">
                           <a 
                             href="#" 
                             className="text-[#00a8ff] hover:underline text-sm flex items-center"
                           >
+<<<<<<< Updated upstream
                             View on Etherscan 
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
+=======
+                            {t('viewOnSolanaExplorer')}
+                            <ExternalLink className="h-4 w-4 ml-1" />
+>>>>>>> Stashed changes
                           </a>
                         </div>
                       </div>
@@ -191,7 +242,7 @@ function App() {
                 
                 {/* Leaderboard widget */}
                 <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
-                  <h2 className="text-white text-lg font-semibold mb-4">Leaderboard</h2>
+                  <h2 className="text-white text-lg font-semibold mb-4">{t('leaderboard')}</h2>
                   <div className="space-y-3">
                     {[1, 2, 3, 4, 5].map((index) => (
                       <div key={index} className="flex items-center justify-between">
@@ -209,7 +260,7 @@ function App() {
                     onClick={handleLeaderboardClick}
                     className="block w-full text-center text-[#00a8ff] hover:underline mt-4 text-sm"
                   >
-                    View Full Leaderboard
+                    {t('viewFullLeaderboard')}
                   </button>
                 </div>
               </div>
