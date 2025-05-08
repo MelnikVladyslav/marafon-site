@@ -4,6 +4,7 @@ import React, { useCallback } from "react"
 import type { WalletInfo } from "../types"
 import { Wallet, LogOut, Loader2 } from "lucide-react"
 import Modal from "./Modal"
+import { useLanguage } from "../context/LanguageContext"
 
 interface WalletConnectProps {
   walletInfo: WalletInfo
@@ -18,6 +19,8 @@ interface WalletConnectProps {
 
 const WalletConnect: React.FC<WalletConnectProps> = React.memo(
   ({ walletInfo, onConnect, onDisconnect, isConnecting, modalMessage, isModalOpen, closeModal, isMobile }) => {
+    // Get translation function
+    const { t } = useLanguage();
     // Форматування адреси гаманця для відображення
     const formatAddress = (address: string) => {
       return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`
@@ -43,7 +46,7 @@ const WalletConnect: React.FC<WalletConnectProps> = React.memo(
             <button
               onClick={handleDisconnect}
               className="ml-2 text-red-400 hover:text-red-300 bg-[#24292e] hover:bg-[#2d333b] p-2 rounded-full transition-colors"
-              title="Disconnect wallet"
+              title={t('disconnect')}
             >
               <LogOut className="h-4 w-4" />
             </button>
@@ -60,12 +63,12 @@ const WalletConnect: React.FC<WalletConnectProps> = React.memo(
             {isConnecting ? (
               <>
                 <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                Connecting...
+                {t('connecting')}
               </>
             ) : (
               <>
                 <Wallet className="h-4 w-4 mr-2" />
-                Connect Wallet
+                {t('connect_wallet')}
               </>
             )}
           </button>

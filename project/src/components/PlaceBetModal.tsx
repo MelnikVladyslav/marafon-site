@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react"
 import { X, AlertCircle, CheckCircle2, Loader2 } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
 
 interface PlaceBetModalProps {
   isOpen: boolean
@@ -14,6 +15,7 @@ interface PlaceBetModalProps {
 
 const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(
   ({ isOpen, onClose, teamName, odds, onPlaceBet, isWalletConnected }) => {
+    const { t } = useLanguage()
     const [amount, setAmount] = useState<string>("0.01")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -93,7 +95,7 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(
             <X className="h-5 w-5" />
           </button>
 
-          <h3 className="text-white text-xl font-bold mb-4">Place Bet</h3>
+          <h3 className="text-white text-xl font-bold mb-4">{t('place_bet')}</h3>
 
           {success ? (
             <div className="text-center py-6">
@@ -193,9 +195,9 @@ const PlaceBetModal: React.FC<PlaceBetModalProps> = React.memo(
                     Processing...
                   </div>
                 ) : !isWalletConnected ? (
-                  "Connect Wallet to Place Bet"
+                  t('connect_wallet_to_place_bet')
                 ) : (
-                  `Place Bet (${amount} SOL)`
+                  `${t('place_bet')} (${amount} SOL)`
                 )}
               </button>
             </form>

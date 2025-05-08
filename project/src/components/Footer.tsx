@@ -1,7 +1,9 @@
 import React from "react"
 import { Github, Twitter } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
 
 const Footer: React.FC = React.memo(() => {
+  const { t } = useLanguage();
   return (
     <footer className="bg-[#0d1117] border-t border-[#30363d] py-8 mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,8 +13,7 @@ const Footer: React.FC = React.memo(() => {
               Ua<span className="text-[#00a8ff]">Dep</span>
             </h3>
             <p className="text-gray-400 mb-4">
-              The future of esports betting. Connect your wallet, place bets on your favorite teams, and withdraw your
-              winnings instantly using smart contracts.
+              {t('footer_description')}
             </p>
             <div className="flex space-x-4">
               <a href="https://x.com/sha256_na_rosny?s=11" className="text-gray-400 hover:text-white transition-colors">
@@ -27,21 +28,21 @@ const Footer: React.FC = React.memo(() => {
             </div>
           </div>
           <div>
-            <h4 className="text-white font-semibold mb-3">Quick Links</h4>
+            <h4 className="text-white font-semibold mb-3">{t('quick_links')}</h4>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Tournaments
+                  {t('tournaments')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  My Bets
+                  {t('my_bets')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Leaderboard
+                  {t('leaderboard')}
                 </a>
               </li>
               <li>
@@ -52,35 +53,35 @@ const Footer: React.FC = React.memo(() => {
             </ul>
           </div>
           <div>
-            <h4 className="text-white font-semibold mb-3">Resources</h4>
+            <h4 className="text-white font-semibold mb-3">{t('resources')}</h4>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  FAQ
+                  {t('faq')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Terms of Service
+                  {t('terms')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Privacy Policy
+                  {t('privacy')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Support
+                  {t('contact')}
                 </a>
               </li>
             </ul>
           </div>
         </div>
         <div className="border-t border-[#30363d] mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} UaDep. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">{t('copyright')}</p>
           <p className="text-gray-500 text-xs mt-2 md:mt-0">
-            This is a demo application. Not intended for real betting.
+            {t('demo_disclaimer')}
           </p>
         </div>
       </div>

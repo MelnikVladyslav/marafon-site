@@ -6,6 +6,7 @@ import type { Tournament } from "../types"
 import TournamentCard from "./TournamentCard"
 import PlaceBetModal from "./PlaceBetModal"
 import { Search } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
 
 interface TournamentsListProps {
   tournaments: Tournament[]
@@ -16,6 +17,7 @@ interface TournamentsListProps {
 
 const TournamentsList: React.FC<TournamentsListProps> = memo(
   ({ tournaments, onPlaceBet, isWalletConnected, onTournamentClick }) => {
+    const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedGame, setSelectedGame] = useState<string | null>(null)
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
@@ -69,7 +71,7 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
     return (
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white mb-4">Tournaments</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('tournaments')}</h2>
 
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mb-4">
@@ -79,7 +81,7 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
               </div>
               <input
                 type="text"
-                placeholder="Search tournaments or teams..."
+                placeholder={t('search_tournaments_teams')}
                 className="bg-[#0d1117] border border-[#30363d] text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#00a8ff] focus:border-transparent"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -92,7 +94,7 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
                 value={selectedGame || ""}
                 onChange={(e) => setSelectedGame(e.target.value || null)}
               >
-                <option value="">All Games</option>
+                <option value="">{t('all_games')}</option>
                 {gameOptions.map((game) => (
                   <option key={game.id} value={game.id}>
                     {game.name}
@@ -105,10 +107,10 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
                 value={selectedStatus || ""}
                 onChange={(e) => setSelectedStatus(e.target.value || null)}
               >
-                <option value="">All Status</option>
-                <option value="live">Live</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="completed">Completed</option>
+                <option value="">{t('all_status')}</option>
+                <option value="live">{t('tournament_status_live')}</option>
+                <option value="upcoming">{t('tournament_status_upcoming')}</option>
+                <option value="completed">{t('tournament_status_completed')}</option>
               </select>
             </div>
           </div>
@@ -129,7 +131,7 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
           </div>
         ) : (
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-8 text-center">
-            <p className="text-gray-400">No tournaments found matching your filters</p>
+            <p className="text-gray-400">{t('no_tournaments_found')}</p>
           </div>
         )}
 

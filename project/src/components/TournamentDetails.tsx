@@ -4,6 +4,7 @@ import type React from "react"
 import { useCallback } from "react"
 import type { Tournament } from "../types"
 import { Award, ArrowLeft, Users, Calendar, Trophy } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
 
 interface TournamentDetailsProps {
   tournament: Tournament
@@ -12,10 +13,11 @@ interface TournamentDetailsProps {
 }
 
 const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBack, onPlaceBet }) => {
+  const { t, language } = useLanguage();
   // Format date for display
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleString("en-US", {
+    return date.toLocaleString(language === 'uk' ? "uk-UA" : "en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -51,7 +53,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
       {/* Back button */}
       <button onClick={onBack} className="flex items-center text-gray-400 hover:text-white mb-6 transition-colors">
         <ArrowLeft className="h-5 w-5 mr-2" />
-        Back to Tournaments
+        {t('back_to_tournaments')}
       </button>
 
       {/* Tournament header */}
@@ -65,7 +67,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
         <div className="absolute bottom-0 left-0 w-full p-6">
           <div className="flex items-center mb-2">
             <span className={`text-xs px-2 py-1 rounded-full ${getStatusStyles()} mr-3`}>
-              {tournament.status.toUpperCase()}
+              {t(`tournament_status_${tournament.status}`)}
             </span>
             <span className="text-gray-300 text-sm">{tournament.game.name}</span>
           </div>
@@ -79,7 +81,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Teams and betting */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Teams</h2>
+              <h2 className="text-xl font-bold text-white">{t('teams')}</h2>
             </div>
 
             <div className="p-6">
@@ -95,7 +97,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                   </div>
                   <div>
                     <h3 className="text-white text-xl font-bold">{tournament.teams[0].name}</h3>
-                    <p className="text-gray-400">Team ID: {tournament.teams[0].id}</p>
+                    <p className="text-gray-400">{t('team_id')}: {tournament.teams[0].id}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -104,7 +106,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                     onClick={() => handlePlaceBet(tournament.teams[0].id, tournament.teams[0].name, tournament.odds[0])}
                     className="bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6] text-black font-semibold py-2 px-6 rounded-lg transition-all transform hover:scale-105"
                   >
-                    Place Bet
+                    {t('place_bet')}
                   </button>
                 </div>
               </div>
@@ -112,7 +114,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
               {/* VS divider */}
               <div className="flex items-center justify-center my-6">
                 <div className="h-px bg-[#30363d] flex-grow"></div>
-                <div className="px-4 text-gray-400 font-bold">VS</div>
+                <div className="px-4 text-gray-400 font-bold">{t('vs')}</div>
                 <div className="h-px bg-[#30363d] flex-grow"></div>
               </div>
 
@@ -128,7 +130,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                   </div>
                   <div>
                     <h3 className="text-white text-xl font-bold">{tournament.teams[1].name}</h3>
-                    <p className="text-gray-400">Team ID: {tournament.teams[1].id}</p>
+                    <p className="text-gray-400">{t('team_id')}: {tournament.teams[1].id}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -137,7 +139,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                     onClick={() => handlePlaceBet(tournament.teams[1].id, tournament.teams[1].name, tournament.odds[1])}
                     className="bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6] text-black font-semibold py-2 px-6 rounded-lg transition-all transform hover:scale-105"
                   >
-                    Place Bet
+                    {t('place_bet')}
                   </button>
                 </div>
               </div>
@@ -147,20 +149,18 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Tournament description */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Tournament Details</h2>
+              <h2 className="text-xl font-bold text-white">{t('tournament_details')}</h2>
             </div>
             <div className="p-6">
               <p className="text-gray-300 mb-6">
-                {tournament.name} is a premier esports event featuring top teams competing for glory and prizes. This
-                tournament showcases the best talent in {tournament.game.name} and promises exciting matches and
-                unforgettable moments for fans and bettors alike.
+                {t('tournament_description').replace('{tournamentName}', tournament.name).replace('{gameName}', tournament.game.name)}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center">
                   <Calendar className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Start Time</div>
+                    <div className="text-gray-400 text-sm">{t('start_time')}</div>
                     <div className="text-white">{formatDate(tournament.startTime)}</div>
                   </div>
                 </div>
@@ -168,7 +168,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                 <div className="flex items-center">
                   <Trophy className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Prize Pool</div>
+                    <div className="text-gray-400 text-sm">{t('prize_pool')}</div>
                     <div className="text-white">$1,000,000</div>
                   </div>
                 </div>
@@ -176,16 +176,16 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
                 <div className="flex items-center">
                   <Users className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Teams</div>
-                    <div className="text-white">2 Teams</div>
+                    <div className="text-gray-400 text-sm">{t('teams')}</div>
+                    <div className="text-white">2 {t('teams').toLowerCase()}</div>
                   </div>
                 </div>
 
                 <div className="flex items-center">
                   <Award className="h-5 w-5 text-[#00a8ff] mr-3" />
                   <div>
-                    <div className="text-gray-400 text-sm">Format</div>
-                    <div className="text-white">Best of 5</div>
+                    <div className="text-gray-400 text-sm">{t('format')}</div>
+                    <div className="text-white">{t('best_of_5')}</div>
                   </div>
                 </div>
               </div>
@@ -198,26 +198,26 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Betting Stats */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Betting Stats</h2>
+              <h2 className="text-xl font-bold text-white">{t('betting_stats')}</h2>
             </div>
             <div className="p-6 space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-400">Total Bets Placed</span>
+                  <span className="text-gray-400">{t('total_bets_placed')}</span>
                   <span className="text-white font-medium">1,245</span>
                 </div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-gray-400">Total Volume</span>
+                  <span className="text-gray-400">{t('total_volume')}</span>
                   <span className="text-white font-medium">87.5 SOL</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Average Bet Size</span>
+                  <span className="text-gray-400">{t('average_bet_size')}</span>
                   <span className="text-white font-medium">0.07 SOL</span>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-[#30363d]">
-                <h3 className="text-white font-medium mb-3">Betting Distribution</h3>
+                <h3 className="text-white font-medium mb-3">{t('betting_distribution')}</h3>
 
                 {/* Team 1 distribution */}
                 <div className="mb-3">
@@ -247,7 +247,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           {/* Recent Bets */}
           <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
             <div className="p-4 border-b border-[#30363d]">
-              <h2 className="text-xl font-bold text-white">Recent Bets</h2>
+              <h2 className="text-xl font-bold text-white">{t('recent_bets')}</h2>
             </div>
             <div className="p-4">
               <div className="space-y-4">

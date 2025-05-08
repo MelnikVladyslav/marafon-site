@@ -9,9 +9,12 @@ interface UserBetsProps {
   tournaments: Tournament[]
   onWithdraw: (betId: string) => Promise<string | null>
   isProcessing: boolean
+  t?: (key: string) => string
 }
 
-const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWithdraw, isProcessing }) => {
+const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWithdraw, isProcessing, t }) => {
+  // Use provided translation function or fallback to identity function
+  const translate = t || ((key: string) => key);
   const [expandedBet, setExpandedBet] = React.useState<string | null>(null)
 
   // Toggle expanded bet
@@ -22,7 +25,8 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
   // Format date for display
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleString("en-US", {
+    // Use the current language for date formatting
+    return date.toLocaleString(translate === ((key: string) => key) ? "en-US" : "uk-UA", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -65,7 +69,7 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-4">My Bets</h2>
+      <h2 className="text-2xl font-bold text-white mb-4">{translate('your_bets')}</h2>
 
       {bets.length > 0 ? (
         <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
@@ -107,19 +111,19 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
                   <div className="px-4 py-4 bg-[#0d1117] border-t border-[#30363d]">
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-gray-400 text-sm">Amount</p>
+                        <p className="text-gray-400 text-sm">{translate('bet_amount')}</p>
                         <p className="text-white font-mono font-semibold">{bet.amount.toFixed(4)} SOL</p>
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">Odds</p>
+                        <p className="text-gray-400 text-sm">{translate('odds')}</p>
                         <p className="text-white font-mono font-semibold">{bet.odds.toFixed(2)}</p>
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">Potential Winnings</p>
+                        <p className="text-gray-400 text-sm">{translate('potential_win')}</p>
                         <p className="text-[#00f5d4] font-mono font-semibold">{potentialWinnings.toFixed(4)} SOL</p>
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">Date Placed</p>
+                        <p className="text-gray-400 text-sm">{translate('date_placed')}</p>
                         <p className="text-white text-sm">{formatDate(bet.timestamp)}</p>
                       </div>
                     </div>
@@ -130,7 +134,7 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
                         disabled={isProcessing}
                         className="w-full bg-gradient-to-r from-[#00a8ff] to-[#00f5d4] hover:from-[#00a8ff] hover:to-[#00d8c6] text-black font-semibold py-2 rounded-lg transition-all transform hover:scale-[1.02]"
                       >
-                        {isProcessing ? "Processing..." : "Withdraw Winnings"}
+                        {isProcessing ? translate('processing') : translate('withdraw')}
                       </button>
                     )}
                   </div>
@@ -141,7 +145,7 @@ const UserBets: React.FC<UserBetsProps> = React.memo(({ bets, tournaments, onWit
         </div>
       ) : (
         <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-8 text-center">
-          <p className="text-gray-400">You haven't placed any bets yet</p>
+          <p className="text-gray-400">{translate('no_bets')}</p>
         </div>
       )}
     </div>
