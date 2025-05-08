@@ -1,4 +1,5 @@
 // Type definitions for the application
+import type { WalletAdapter } from '@solana/wallet-adapter-base';
 
 export interface Tournament {
   id: string
@@ -44,6 +45,7 @@ export interface WalletInfo {
   balance: number
   connected: boolean
   tokens?: Token[]
+  adapter: any
 }
 
 // Add Solana specific types

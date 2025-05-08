@@ -35,12 +35,12 @@ export const mockTournaments: Tournament[] = [
     startTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
     teams: [
       {
-        id: "t1",
+        id: "1",
         name: "Team Liquid",
         logo: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
       },
       {
-        id: "t2",
+        id: "2",
         name: "OG",
         logo: "https://images.pexels.com/photos/2007647/pexels-photo-2007647.jpeg",
       },
@@ -59,12 +59,12 @@ export const mockTournaments: Tournament[] = [
     startTime: new Date(Date.now() - 1800000).toISOString(), // 30 min ago
     teams: [
       {
-        id: "t3",
+        id: "3",
         name: "Natus Vincere",
         logo: "https://images.pexels.com/photos/7915527/pexels-photo-7915527.jpeg",
       },
       {
-        id: "t4",
+        id: "4",
         name: "FaZe Clan",
         logo: "https://images.pexels.com/photos/7915509/pexels-photo-7915509.jpeg",
       },
@@ -83,12 +83,12 @@ export const mockTournaments: Tournament[] = [
     startTime: new Date(Date.now() + 7200000).toISOString(), // 2 hours from now
     teams: [
       {
-        id: "t5",
+        id: "5",
         name: "T1",
         logo: "https://images.pexels.com/photos/7915531/pexels-photo-7915531.jpeg",
       },
       {
-        id: "t6",
+        id: "6",
         name: "DRX",
         logo: "https://images.pexels.com/photos/7915559/pexels-photo-7915559.jpeg",
       },
@@ -107,12 +107,12 @@ export const mockTournaments: Tournament[] = [
     startTime: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
     teams: [
       {
-        id: "t7",
+        id: "7",
         name: "NRG",
         logo: "https://images.pexels.com/photos/7915523/pexels-photo-7915523.jpeg",
       },
       {
-        id: "t8",
+        id: "8",
         name: "Team Liquid",
         logo: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
       },
@@ -126,7 +126,7 @@ export const mockBets: Bet[] = [
   {
     id: "b1",
     tournamentId: "2",
-    teamId: "t3",
+    teamId: "3",
     amount: 0.05,
     odds: 2.1,
     timestamp: new Date(Date.now() - 900000).toISOString(), // 15 min ago
@@ -135,7 +135,7 @@ export const mockBets: Bet[] = [
   {
     id: "b2",
     tournamentId: "1",
-    teamId: "t1",
+    teamId: "1",
     amount: 0.1,
     odds: 1.75,
     timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
