@@ -12,8 +12,8 @@ if (!TOKEN) {
 
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
+  params: {
+    token: TOKEN,
   },
 })
   
