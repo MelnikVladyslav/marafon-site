@@ -57,7 +57,7 @@ const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, 
         <div className="absolute bottom-2 left-3 flex items-center">
           <span className="text-white font-semibold text-lg">{tournament.game.name}</span>
           <span className={`ml-2 text-xs px-2 py-1 rounded-full ${getStatusStyles()}`}>
-            {t(`tournament_status_${tournament.status?.toUpperCase}`)}
+            {t(`tournament_status_${tournament.status}`)}
           </span>
         </div>
       </div>
