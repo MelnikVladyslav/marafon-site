@@ -1,28 +1,24 @@
-import axios from "axios"
+import axios from "axios";
 
-const BASE_URL = "https://api.pandascore.co"
-const GAME_SLUGS = ["lol", "csgo", "dota2", "valorant"]
+const BASE_URL = "/api/tournaments";  // Використовуємо наш проксі API
+const GAME_SLUGS = ["lol", "csgo", "dota2", "valorant"];
 
 // Перевірка токену
-const TOKEN = "c8_-vkD8efogVVy52d0iMpl9MPWMECT-LdMZ5I05b_HRQeKBuqM"
+const TOKEN = process.env.NEXT_PUBLIC_PANDASCORE_API_TOKEN;
 
 if (!TOKEN) {
-  console.warn("⚠️ PANDASCORE API token is missing! Make sure it's defined in .env.local as NEXT_PUBLIC_PANDASCORE_API_TOKEN")
+  console.warn("⚠️ PANDASCORE API token is missing! Make sure it's defined in .env.local as NEXT_PUBLIC_PANDASCORE_API_TOKEN");
 }
 
 const api = axios.create({
-  baseURL: BASE_URL,
-  params: {
-    token: TOKEN,
-  },
-})
-  
+  baseURL: BASE_URL,  // Тепер будемо викликати наш API проксі
+});
 
 export const getAllTournaments = async () => {
   try {
     const allTournaments = await Promise.all(
       GAME_SLUGS.map(async (slug) => {
-        const response = await api.get(`/${slug}/tournaments`);
+        const response = await api.get(`/${slug}/tournaments`);  // Запит через наш проксі
         return response.data.map((tournament) => ({
           id: tournament.id.toString(),
           name: tournament.name,
