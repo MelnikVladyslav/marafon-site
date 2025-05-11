@@ -13,9 +13,12 @@ import useWalletHook from "./hooks/useWallet"
 import useSmartContract from "./hooks/useSmartContract"
 import { mockTournaments } from "./data/mockData"
 import { ExternalLink } from "lucide-react"
+import { useLanguage } from "./context/LanguageContext"
 import { Tournament } from "./types"
 
 function App() {
+  // Get translation function
+  const { t } = useLanguage();
   // Get wallet and smart contract hooks
   const {
     walletInfo,
@@ -134,10 +137,10 @@ function App() {
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
               <div className="text-center">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#9945FF] to-[#14F195]">
-                  Solana Esports Betting
+                  {t('hero_title')}
                 </h1>
                 <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                  Connect your wallet, place bets on your favorite teams, and win SOL
+                  {t('hero_subtitle')}
                 </p>
                 {!walletInfo.connected && (
                   <button
@@ -145,7 +148,7 @@ function App() {
                     disabled={isConnecting}
                     className="bg-gradient-to-r from-[#9945FF] to-[#14F195] hover:from-[#8A3EE8] hover:to-[#12D988] text-black font-semibold py-3 px-8 rounded-lg transition-all transform hover:scale-105"
                   >
-                    {isConnecting ? "Connecting..." : "Connect Wallet to Start"}
+                    {isConnecting ? t('connecting') : t('connect_wallet_to_start')}
                   </button>
                 )}
               </div>
@@ -172,6 +175,7 @@ function App() {
                     tournaments={mockTournaments}
                     onWithdraw={handleWithdraw}
                     isProcessing={isProcessing}
+                    t={t}
                   />
                 </section>
               </div>
@@ -181,18 +185,18 @@ function App() {
                 {walletInfo.connected && (
                   <>
                     {/* Token display widget */}
-                    <TokenDisplay tokens={walletInfo.tokens || []} />
+                    <TokenDisplay tokens={walletInfo.tokens || []} t={t} />
 
                     {/* Smart Contract Info */}
                     <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
-                      <h2 className="text-white text-lg font-semibold mb-4">Program Info</h2>
+                      <h2 className="text-white text-lg font-semibold mb-4">{t('program_info')}</h2>
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Betting Program:</span>
+                          <span className="text-gray-400">{t('betting_program')}:</span>
                           <span className="text-gray-300 font-mono text-sm">{formatAddress(contractAddress)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Network:</span>
+                          <span className="text-gray-400">{t('network')}:</span>
                           <span className="text-gray-300 font-mono text-sm">Solana Devnet</span>
                         </div>
                         <div className="pt-2">
@@ -202,7 +206,7 @@ function App() {
                             rel="noopener noreferrer"
                             className="text-[#14F195] hover:underline text-sm flex items-center"
                           >
-                            View on Solana Explorer
+                            {t('view_on_solana')}
                             <ExternalLink className="h-4 w-4 ml-1" />
                           </a>
                         </div>
@@ -213,7 +217,7 @@ function App() {
 
                 {/* Leaderboard widget */}
                 <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
-                  <h2 className="text-white text-lg font-semibold mb-4">Leaderboard</h2>
+                  <h2 className="text-white text-lg font-semibold mb-4">{t('leaderboard')}</h2>
                   <div className="space-y-3">
                     {[1, 2, 3, 4, 5].map((index) => (
                       <div key={index} className="flex items-center justify-between">
@@ -231,7 +235,7 @@ function App() {
                     onClick={handleLeaderboardClick}
                     className="block w-full text-center text-[#9945FF] hover:underline mt-4 text-sm"
                   >
-                    View Full Leaderboard
+                    {t('view_full_leaderboard')}
                   </button>
                 </div>
               </div>

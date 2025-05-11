@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useLanguage } from "../context/LanguageContext"
 
 interface Leader {
   id: string
@@ -78,6 +79,7 @@ interface LeaderboardProps {
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
+  const { t } = useLanguage();
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back button */}
@@ -90,22 +92,22 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
               clipRule="evenodd"
             />
           </svg>
-          Back to Tournaments
+          {t('back_to_tournaments')}
         </button>
       )}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Leaderboard</h1>
-        <p className="text-gray-400">Top performers in crypto esports betting</p>
+        <h1 className="text-3xl font-bold text-white mb-2">{t('leaderboard')}</h1>
+        <p className="text-gray-400">{t('top_performers')}</p>
       </div>
 
       <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
         {/* Table header */}
         <div className="grid grid-cols-12 bg-[#0d1117] p-4 border-b border-[#30363d] text-gray-400 font-medium">
           <div className="col-span-1 text-center">#</div>
-          <div className="col-span-5">Player</div>
-          <div className="col-span-3 text-right">Winnings (SOL)</div>
-          <div className="col-span-3 text-right">Win Rate</div>
+          <div className="col-span-5">{t('player')}</div>
+          <div className="col-span-3 text-right">{t('winnings')} (SOL)</div>
+          <div className="col-span-3 text-right">{t('win_rate')}</div>
         </div>
 
         {/* Table body */}
@@ -134,23 +136,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onBack }) => {
       </div>
 
       <div className="mt-8 bg-[#161b22] border border-[#30363d] rounded-lg p-6">
-        <h2 className="text-xl font-bold text-white mb-4">How to Join the Leaderboard</h2>
+        <h2 className="text-xl font-bold text-white mb-4">{t('how_to_join_leaderboard')}</h2>
         <ul className="space-y-3 text-gray-300">
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>Connect your wallet and place bets on tournaments</p>
+            <p>{t('connect_wallet_place_bets')}</p>
           </li>
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>Win more bets to increase your win rate</p>
+            <p>{t('win_more_bets')}</p>
           </li>
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>The leaderboard is updated daily based on your performance</p>
+            <p>{t('leaderboard_updated_daily')}</p>
           </li>
           <li className="flex items-start">
             <div className="flex-shrink-0 h-5 w-5 text-[#00a8ff] mr-2">•</div>
-            <p>Top performers may receive special rewards and bonuses</p>
+            <p>{t('top_performers_rewards')}</p>
           </li>
         </ul>
       </div>

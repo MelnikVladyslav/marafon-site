@@ -1,19 +1,24 @@
 import React from "react"
 import type { Token } from "../types"
+import { useLanguage } from "../context/LanguageContext"
 
 interface TokenDisplayProps {
   tokens: Token[]
+  t?: (key: string) => string
 }
 
-const TokenDisplay: React.FC<TokenDisplayProps> = React.memo(({ tokens }) => {
+const TokenDisplay: React.FC<TokenDisplayProps> = React.memo(({ tokens, t }) => {
+  // Use provided translation function or get from context
+  const { t: contextT } = useLanguage();
+  const translate = t || contextT;
   if (!tokens) {
     console.log("Tokens:", tokens)
-    return <div>No tokens available.</div>
+    return <div>{translate('no_tokens_available')}</div>
   }
 
   return (
     <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
-      <h2 className="text-white text-lg font-semibold mb-4">Your Tokens</h2>
+      <h2 className="text-white text-lg font-semibold mb-4">{translate('your_tokens')}</h2>
 
       <div className="space-y-3">
         {tokens.map((token) => (
@@ -41,7 +46,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = React.memo(({ tokens }) => {
       </div>
 
       <button className="mt-4 w-full bg-[#30363d] hover:bg-[#3c444d] text-white py-2 rounded-lg transition-colors">
-        Add Custom Token
+        {translate('add_custom_token')}
       </button>
     </div>
   )

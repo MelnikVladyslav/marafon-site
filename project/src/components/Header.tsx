@@ -5,6 +5,8 @@ import type { WalletInfo } from "../types"
 import { Menu, X } from "lucide-react"
 import logo from "../assets/logo.jpg"
 import WalletConnect from "./WalletConnect"
+import LanguageToggle from "./LanguageToggle"
+import { useLanguage } from "../context/LanguageContext"
 
 interface HeaderProps {
   walletInfo: WalletInfo
@@ -59,10 +61,10 @@ const Header: React.FC<HeaderProps> = React.memo(
                 className="text-gray-300 hover:text-white transition-colors"
                 onClick={handleLinkClick}
               >
-                Tournaments
+                {useLanguage().t('tournaments')}
               </a>
               <a href="#mybets" className="text-gray-300 hover:text-white transition-colors" onClick={handleLinkClick}>
-                My Bets
+                {useLanguage().t('my_bets')}
               </a>
               <a
                 href="#"
@@ -73,7 +75,7 @@ const Header: React.FC<HeaderProps> = React.memo(
                   if (onLeaderboardClick) onLeaderboardClick()
                 }}
               >
-                Leaderboard
+                {useLanguage().t('leaderboard')}
               </a>
               <WalletConnect
                 walletInfo={walletInfo}
@@ -84,6 +86,7 @@ const Header: React.FC<HeaderProps> = React.memo(
                 isModalOpen={isModalOpen}
                 closeModal={closeModal}
               />
+              <LanguageToggle />
             </nav>
 
             {/* Mobile menu button */}
@@ -104,14 +107,14 @@ const Header: React.FC<HeaderProps> = React.memo(
                 className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-[#30363d] rounded-md"
                 onClick={handleLinkClick}
               >
-                Tournaments
+                {useLanguage().t('tournaments')}
               </a>
               <a
                 href="#mybets"
                 className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-[#30363d] rounded-md"
                 onClick={handleLinkClick}
               >
-                My Bets
+                {useLanguage().t('my_bets')}
               </a>
               <a
                 href="#"
@@ -122,7 +125,7 @@ const Header: React.FC<HeaderProps> = React.memo(
                   if (onLeaderboardClick) onLeaderboardClick()
                 }}
               >
-                Leaderboard
+                {useLanguage().t('leaderboard')}
               </a>
               <WalletConnect
                 walletInfo={walletInfo}
@@ -134,6 +137,7 @@ const Header: React.FC<HeaderProps> = React.memo(
                 closeModal={closeModal}
                 isMobile={true}
               />
+              <LanguageToggle isMobile={true} />
             </div>
           </div>
         )}

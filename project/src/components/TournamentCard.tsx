@@ -3,6 +3,7 @@
 import React, { useCallback } from "react"
 import type { Tournament } from "../types"
 import { Clock } from "lucide-react"
+import { useLanguage } from "../context/LanguageContext"
 
 interface TournamentCardProps {
   tournament: Tournament
@@ -10,10 +11,11 @@ interface TournamentCardProps {
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, onPlaceBet }) => {
+  const { t, language } = useLanguage();
   // Format date for display
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleString("en-US", {
+    return date.toLocaleString(language === 'uk' ? "uk-UA" : "en-US", {
       month: "short",
       day: "numeric",
       hour: "2-digit",
@@ -55,7 +57,7 @@ const TournamentCard: React.FC<TournamentCardProps> = React.memo(({ tournament, 
         <div className="absolute bottom-2 left-3 flex items-center">
           <span className="text-white font-semibold text-lg">{tournament.game.name}</span>
           <span className={`ml-2 text-xs px-2 py-1 rounded-full ${getStatusStyles()}`}>
-            {tournament.status?.toUpperCase()}
+            {t(`tournament_status_${tournament.status?.toUpperCase}`)}
           </span>
         </div>
       </div>
