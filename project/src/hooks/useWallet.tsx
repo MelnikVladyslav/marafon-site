@@ -13,6 +13,7 @@ export const useWallet = () => {
     connected: false,
     balance: 0,
     tokens: [],
+    adapter: undefined
   })
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +32,26 @@ export const useWallet = () => {
     const isPhantomInstalled = typeof window !== "undefined" && window.solana && window.solana.isPhantom
     return isPhantomInstalled
   }, [])
+
+  
+  const updateBalance = async () => {
+    try {
+      const balance = await connection.getBalance(new PublicKey(walletInfo.address))
+      const solBalance = balance / 1_000_000_000
+
+      setWalletInfo(prev => ({
+        ...prev,
+        balance: solBalance,
+        tokens: prev.tokens.map(token =>
+          token.symbol === "SOL"
+            ? { ...token, balance: solBalance }
+            : token
+        ),
+      }))
+    } catch (err) {
+      console.error("Failed to update balance:", err)
+    }
+  }
 
   // Connect wallet function
   const connectWallet = useCallback(async () => {
@@ -73,6 +94,7 @@ export const useWallet = () => {
               address: "native",
             },
           ],
+          adapter: window.solana
         })
         setModalMessage("Wallet connected successfully!")
         setIsModalOpen(true)
@@ -86,6 +108,18 @@ export const useWallet = () => {
       setIsConnecting(false)
     }
   }, [checkWalletAvailability, connection])
+
+  useEffect(() => {
+    if (!walletInfo.connected || !walletInfo.address || !connection) return
+  
+    const publicKey = new PublicKey(walletInfo.address)
+  
+    updateBalance() // миттєвий виклик при першому підключенні
+  
+    const interval = setInterval(updateBalance, 10_000) // кожні 10 секунд
+  
+    return () => clearInterval(interval)
+  }, [walletInfo.connected, walletInfo.address, connection])
 
   const closeModal = () => {
     setIsModalOpen(false)
@@ -103,6 +137,7 @@ export const useWallet = () => {
         connected: false,
         balance: 0,
         tokens: [],
+        adapter: null
       })
     } catch (err) {
       console.error("Error disconnecting wallet:", err)

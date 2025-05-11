@@ -10,9 +10,16 @@ import {
 } from "@solana/web3.js"
 import type { Bet, WalletInfo } from "../types"
 import { Buffer } from "buffer"
+import { struct, u8 } from "@solana/buffer-layout";
+import { u64 as u64Layout } from '@solana/buffer-layout-utils'
 
 // Солана програма ID (встановити твоє значення)
 const PROGRAM_ID = "LE4ofTSB2ZgAnA4VrV7YvvAmew6de2e4GiAVDE6rnzW"
+
+function toBufferLE(n: bigint, width = 8): Buffer {
+  const hex = n.toString(16).padStart(width * 2, '0')
+  return Buffer.from(hex.match(/../g)!.reverse().map((b) => parseInt(b, 16)))
+}
 
 export const useSmartContract = (walletInfo: WalletInfo) => {
   const [userBets, setUserBets] = useState<Bet[]>([])
@@ -22,12 +29,18 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
   const [isLoading, setIsLoading] = useState(false)
   const [programId] = useState<string>(PROGRAM_ID)
   const [connection, setConnection] = useState<Connection | null>(null)
+  const layout = struct([
+    u8('instruction'),
+    u64Layout('tournamentId'),
+    u64Layout('teamId'),
+    u64Layout('amount'),
+  ])
 
   const memoizedUserBets = useMemo(() => userBets, [userBets])
 
   // Ініціалізація з'єднання Solana
   useEffect(() => {
-    const conn = new Connection(clusterApiUrl("devnet"))
+    const conn = new Connection(clusterApiUrl("devnet"), "confirmed")
     setConnection(conn)
   }, [])
 
@@ -74,53 +87,81 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
   // Обробка ставки або виведення
   const handleBet = useCallback(
     async (action: "place" | "withdraw", betDetails: any) => {
-      if (!walletInfo.connected || !connection) {
+      if (!walletInfo.connected || !connection || !walletInfo.adapter) {
         setError("Wallet not connected. Please connect your wallet first.")
         return null
       }
-
+  
       setIsProcessing(true)
       setError(null)
-
+  
       try {
         const transaction = new Transaction()
-
         const programId = new PublicKey(PROGRAM_ID)
-
+        const userPublicKey = new PublicKey(walletInfo.address)
+  
         if (action === "place") {
-          // Перетворення суми на лямпорти
-          const lamports = betDetails.amount * LAMPORTS_PER_SOL
+          const lamports = BigInt(betDetails.amount * LAMPORTS_PER_SOL)
+          const teamId = BigInt(betDetails.teamId) 
+          const tournamentId = BigInt(betDetails.tournamentId)
+  
+          const data = Buffer.alloc(1 + 8 + 8 + 8)
+          layout.encode({
+            instruction: 1,
+            tournamentId: tournamentId,
+            teamId: teamId,
+            amount: lamports,
+          }, data)
 
-          // Формуємо інструкцію для смартконтракту
-          const data = Buffer.from([
-            0, // action: place bet
-            Number(betDetails.tournamentId),
-            Number(betDetails.teamId),
-            ...new Uint8Array(new Float64Array([lamports]).buffer),
-            ...new Uint8Array(new Float64Array([betDetails.odds * 100]).buffer),
-          ])
+          const [betPDA] = await PublicKey.findProgramAddressSync(
+            [
+              Buffer.from("bet"),
+              userPublicKey.toBuffer(),
+              toBufferLE(BigInt(betDetails.tournamentId), 8),
+              toBufferLE(BigInt(betDetails.teamId), 8),
+            ],
+            programId
+          )
 
           const instruction = new TransactionInstruction({
             keys: [
-              { pubkey: new PublicKey(walletInfo.address), isSigner: true, isWritable: true },
+              { pubkey: userPublicKey, isSigner: true, isWritable: true },
+              { pubkey: betPDA, isSigner: false, isWritable: true },
+              { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
             ],
             programId,
             data,
           })
 
-          const { blockhash } = await connection.getLatestBlockhash()
-          transaction.recentBlockhash = blockhash
-          transaction.feePayer = new PublicKey(walletInfo.address)
-
           transaction.add(instruction)
+  
+        } else if (action === "withdraw") {
+          const data = Buffer.from([
+            1, // action: withdraw
+            ...Buffer.from(betDetails.betId),
+          ])
+  
+          const instruction = new TransactionInstruction({
+            keys: [{ pubkey: userPublicKey, isSigner: true, isWritable: true }],
+            programId,
+            data,
+          })
+  
+          transaction.add(instruction)
+        }
+  
+        // Підготовка та відправка
+        const { blockhash } = await connection.getLatestBlockhash()
+        transaction.recentBlockhash = blockhash
+        transaction.feePayer = userPublicKey
+  
+        const signedTx = await window.solana.signTransaction(transaction)
+        const signature = await connection.sendRawTransaction(signedTx?.serialize() || '')
+        await connection.confirmTransaction(signature)
 
-          // Надсилаємо транзакцію
-          const { signature } = await window.solana.signAndSendTransaction(transaction)
-          await connection.confirmTransaction(signature)
-
-          setTransactionHash(signature)
-
-          // Додаємо ставку до списку ставок
+        setTransactionHash(signature)
+  
+        if (action === "place") {
           const newBet: Bet = {
             id: `pending-${Date.now()}`,
             tournamentId: betDetails.tournamentId,
@@ -130,38 +171,14 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
             timestamp: new Date().toISOString(),
             status: "pending",
           }
-
           setUserBets((prev) => [newBet, ...prev])
-          return signature
         } else if (action === "withdraw") {
-          // Інструкція для виведення виграшу
-          const data = Buffer.from([
-            1, // action: withdraw
-            ...Buffer.from(betDetails.betId),
-          ])
-
-          const instruction = new TransactionInstruction({
-            keys: [
-              { pubkey: new PublicKey(walletInfo.address), isSigner: true, isWritable: true },
-            ],
-            programId,
-            data,
-          })
-
-          transaction.add(instruction)
-
-          // Надсилаємо транзакцію
-          const { signature } = await window.solana.signAndSendTransaction(transaction)
-          await connection.confirmTransaction(signature)
-
-          setTransactionHash(signature)
-
           setUserBets((prev) =>
             prev.map((bet) => (bet.id === betDetails.betId ? { ...bet, status: "won" } : bet)),
           )
-
-          return signature
         }
+  
+        return signature
       } catch (err) {
         console.error("Smart contract error:", err)
         setError("Failed to process your request. Please try again.")
@@ -170,8 +187,9 @@ export const useSmartContract = (walletInfo: WalletInfo) => {
         setIsProcessing(false)
       }
     },
-    [walletInfo, connection],
+    [walletInfo, connection]
   )
+  
 
   // Функція для оновлення даних ставок
   const refreshBets = useCallback(() => {

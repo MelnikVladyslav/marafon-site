@@ -1,10 +1,9 @@
 // Type definitions for the application
-
 export interface Tournament {
   id: string
   name: string
   game: Game
-  status: "upcoming" | "live" | "completed"
+  status: string
   startTime: string
   teams: [Team, Team]
   odds: [number, number]
@@ -44,6 +43,7 @@ export interface WalletInfo {
   balance: number
   connected: boolean
   tokens?: Token[]
+  adapter: any
 }
 
 // Add Solana specific types
