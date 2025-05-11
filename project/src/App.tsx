@@ -13,6 +13,7 @@ import useWalletHook from "./hooks/useWallet"
 import useSmartContract from "./hooks/useSmartContract"
 import { mockTournaments } from "./data/mockData"
 import { ExternalLink } from "lucide-react"
+import { Tournament } from "./types"
 
 function App() {
   // Get wallet and smart contract hooks
@@ -44,6 +45,7 @@ function App() {
 
   // State for tournament details page
   const [selectedTournament, setSelectedTournament] = useState<string | null>(null)
+  const [tournaments, setTournaments] = useState<Tournament[]>([])
 
   // State for page navigation
   const [currentPage, setCurrentPage] = useState<"home" | "leaderboard" | "tournament-details">("home")
@@ -67,10 +69,14 @@ function App() {
   }
 
   // Handle tournament card click
-  const handleTournamentClick = (tournamentId: string) => {
-    const tournament = mockTournaments.find((t) => t.id === tournamentId)
+  const handleTournamentClick = (tournamentId: string, tournaments: Tournament[]) => {
+    const tournament = tournaments.find((t) => t.id === tournamentId)
+
+    console.log(tournament?.name)
+
     if (tournament) {
       setSelectedTournament(tournamentId)
+      setTournaments(tournaments)
       setCurrentPage("tournament-details")
     }
   }
@@ -87,7 +93,7 @@ function App() {
   }
 
   // Find the selected tournament
-  const tournament = selectedTournament ? mockTournaments.find((t) => t.id === selectedTournament) : null
+  const tournament = selectedTournament ? tournaments.find((t) => t.id === selectedTournament) : null
 
   // Handle bet from tournament details
   const handleBetFromDetails = (tournamentId: string, teamId: string, teamName: string, odds: number) => {
@@ -153,7 +159,6 @@ function App() {
                 {/* Tournaments section */}
                 <section id="tournaments" className="mb-12">
                   <TournamentsList
-                    tournaments={mockTournaments}
                     onPlaceBet={handlePlaceBet}
                     isWalletConnected={walletInfo.connected}
                     onTournamentClick={handleTournamentClick}

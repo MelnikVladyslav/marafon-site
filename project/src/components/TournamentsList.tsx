@@ -1,24 +1,42 @@
 "use client"
 
 import type React from "react"
-import { useState, memo } from "react"
-import type { Tournament } from "../types"
+import { useState, memo, useEffect } from "react"
 import TournamentCard from "./TournamentCard"
 import PlaceBetModal from "./PlaceBetModal"
 import { Search } from "lucide-react"
+import { Tournament } from "../types"
+import { getAllTournaments } from "../api/pandascoreAPI"
 
 interface TournamentsListProps {
-  tournaments: Tournament[]
   onPlaceBet: (tournamentId: string, teamId: string, amount: number, odds: number) => Promise<string | null>
   isWalletConnected: boolean
-  onTournamentClick?: (tournamentId: string) => void
+  onTournamentClick?: (tournamentId: string, tournaments: Tournament[]) => void
 }
 
 const TournamentsList: React.FC<TournamentsListProps> = memo(
-  ({ tournaments, onPlaceBet, isWalletConnected, onTournamentClick }) => {
+  ({ onPlaceBet, isWalletConnected, onTournamentClick }) => {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedGame, setSelectedGame] = useState<string | null>(null)
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+    const [tournaments, setTournaments] = useState<Tournament[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
+
+    useEffect(() => {
+      const fetchData = async () => {
+        setLoading(true)
+        try {
+          const data = await getAllTournaments()
+          setTournaments(data)
+        } catch (err) {
+          console.error("Failed to load tournaments", err)
+        } finally {
+          setLoading(false)
+        }
+      }
+    
+      fetchData()
+    }, [])
 
     // Modal state
     const [isBetModalOpen, setIsBetModalOpen] = useState(false)
@@ -120,7 +138,7 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
             {filteredTournaments.map((tournament) => (
               <div
                 key={tournament.id}
-                onClick={() => onTournamentClick && onTournamentClick(tournament.id)}
+                onClick={() => onTournamentClick && onTournamentClick(tournament.id, tournaments)}
                 className={`cursor-pointer ${onTournamentClick ? "hover:scale-[1.03] transition-transform" : ""}`}
               >
                 <TournamentCard tournament={tournament} onPlaceBet={handleOpenBetModal} />

@@ -57,7 +57,7 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
       {/* Tournament header */}
       <div className="relative h-64 w-full rounded-lg overflow-hidden mb-8">
         <img
-          src={tournament.game.image}
+          src={tournament.game.image || "https://images.pexels.com/photos/596750/pexels-photo-596750.jpeg"}
           alt={tournament.game.name}
           className="w-full h-full object-cover filter brightness-50"
         />
