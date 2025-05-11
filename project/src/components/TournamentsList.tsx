@@ -7,7 +7,6 @@ import PlaceBetModal from "./PlaceBetModal"
 import { Search } from "lucide-react"
 import { useLanguage } from "../context/LanguageContext"
 import { Tournament } from "../types"
-import { getAllTournaments } from "../api/pandascoreAPI"
 
 interface TournamentsListProps {
   onPlaceBet: (tournamentId: string, teamId: string, amount: number, odds: number) => Promise<string | null>
@@ -28,15 +27,16 @@ const TournamentsList: React.FC<TournamentsListProps> = memo(
       const fetchData = async () => {
         setLoading(true)
         try {
-          const data = await getAllTournaments()
+          const res = await fetch('/api/tournaments') 
+          const data = await res.json()
           setTournaments(data)
         } catch (err) {
-          console.error("Failed to load tournaments", err)
+          console.error('Failed to load tournaments', err)
         } finally {
           setLoading(false)
         }
       }
-    
+
       fetchData()
     }, [])
 
