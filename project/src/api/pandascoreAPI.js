@@ -1,11 +1,11 @@
 import axios from "axios"
 
-// Токен API
+// API Token
 const TOKEN = "c8_-vkD8efogVVy52d0iMpl9MPWMECT-LdMZ5I05b_HRQeKBuqM"
 
-// Створюємо клієнт для API Pandascore з проксі через Vite
+// Create API client with the same baseURL
 const api = axios.create({
-  baseURL: "/api", // Це буде проксіюватися через Vite
+  baseURL: "/api", // This will be handled by Vercel rewrites in production
   params: {
     token: TOKEN,
   },
@@ -19,7 +19,7 @@ export const getAllTournaments = async () => {
     const allTournaments = await Promise.all(
       GAME_SLUGS.map(async (slug) => {
         console.log(`Fetching tournaments for ${slug}...`)
-        // Використовуємо проксі, налаштований у vite.config.ts
+        // This will work both locally and in production
         const response = await api.get(`/${slug}/tournaments`)
         console.log(`Received ${response.data.length} tournaments for ${slug}`)
 
