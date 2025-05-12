@@ -1,5 +1,5 @@
 import React from "react"
-import { Github, Twitter } from "lucide-react"
+import { Github, Twitch, Twitter } from "lucide-react"
 import { useLanguage } from "../context/LanguageContext"
 
 const Footer: React.FC = React.memo(() => {
@@ -24,6 +24,12 @@ const Footer: React.FC = React.memo(() => {
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <Github className="h-5 w-5" />
+              </a>
+              <a
+                href="https://www.twitch.tv/europeancyberleague"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Twitch className="h-5 w-5" />
               </a>
             </div>
           </div>
