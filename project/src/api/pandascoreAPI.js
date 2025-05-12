@@ -1,28 +1,28 @@
 import axios from "axios"
 
-const BASE_URL = "https://api.pandascore.co"
-const GAME_SLUGS = ["lol", "csgo", "dota2", "valorant"]
-
-// Перевірка токену
+// Токен API
 const TOKEN = "c8_-vkD8efogVVy52d0iMpl9MPWMECT-LdMZ5I05b_HRQeKBuqM"
 
-if (!TOKEN) {
-  console.warn("⚠️ PANDASCORE API token is missing! Make sure it's defined in .env.local as NEXT_PUBLIC_PANDASCORE_API_TOKEN")
-}
-
+// Створюємо клієнт для API Pandascore з проксі через Vite
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "/api", // Це буде проксіюватися через Vite
   params: {
     token: TOKEN,
   },
 })
-  
+
+const GAME_SLUGS = ["lol", "csgo", "dota2", "valorant"]
 
 export const getAllTournaments = async () => {
   try {
+    console.log("Fetching all tournaments...")
     const allTournaments = await Promise.all(
       GAME_SLUGS.map(async (slug) => {
-        const response = await api.get(`/${slug}/tournaments`);
+        console.log(`Fetching tournaments for ${slug}...`)
+        // Використовуємо проксі, налаштований у vite.config.ts
+        const response = await api.get(`/${slug}/tournaments`)
+        console.log(`Received ${response.data.length} tournaments for ${slug}`)
+
         return response.data.map((tournament) => ({
           id: tournament.id.toString(),
           name: tournament.name,
@@ -38,13 +38,19 @@ export const getAllTournaments = async () => {
             logo: team.image_url,
           })),
           odds: [1.5, 2.2],
-        }));
-      })
-    );
+        }))
+      }),
+    )
 
-    return allTournaments.flat();
+    const result = allTournaments.flat()
+    console.log(`Total tournaments fetched: ${result.length}`)
+    return result
   } catch (error) {
-    console.error("❌ Error fetching all tournaments:", error);
-    throw error;
+    console.error("❌ Error fetching all tournaments:", error)
+    if (error.response) {
+      console.error("Response data:", error.response.data)
+      console.error("Response status:", error.response.status)
+    }
+    throw error
   }
-};
+}
