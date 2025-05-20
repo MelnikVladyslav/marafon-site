@@ -1,19 +1,28 @@
 "use client"
 
 import type React from "react"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import type { Tournament } from "../types"
 import { Award, ArrowLeft, Users, Calendar, Trophy } from "lucide-react"
 import { useLanguage } from "../context/LanguageContext"
+import PlaceBetModal from "./PlaceBetModal"
 
 interface TournamentDetailsProps {
   tournament: Tournament
   onBack: () => void
-  onPlaceBet: (tournamentId: string, teamId: string, teamName: string, odds: number) => void
+  onPlaceBet: (tournamentId: string, teamId: string, amount: number, teamName: string, odds: number) => void
 }
 
 const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBack, onPlaceBet }) => {
   const { t, language } = useLanguage();
+
+  const [selectedTeam, setSelectedTeam] = useState<{
+    id: string
+    name: string
+    odds: number
+  } | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   // Format date for display
   const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString)
@@ -43,10 +52,11 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
 
   const handlePlaceBet = useCallback(
     (teamId: string, teamName: string, odds: number) => {
-      onPlaceBet(tournament.id, teamId, teamName, odds)
+      setSelectedTeam({ id: teamId, name: teamName, odds })
+      setIsModalOpen(true)
     },
-    [onPlaceBet, tournament.id],
-  )
+    [],
+  )  
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -272,6 +282,20 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({ tournament, onBac
           </div>
         </div>
       </div>
+        {selectedTeam && (
+          <PlaceBetModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onPlaceBet={async (amount) => {
+              await onPlaceBet(tournament.id, selectedTeam.id, amount, selectedTeam.name, selectedTeam.odds)
+              setIsModalOpen(false)
+              return null 
+            }}
+            teamName={selectedTeam.name}
+            odds={selectedTeam.odds}
+            isWalletConnected={true} 
+          />
+        )}
     </div>
   )
 }

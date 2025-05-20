@@ -99,10 +99,10 @@ function App() {
   const tournament = selectedTournament ? tournaments.find((t) => t.id === selectedTournament) : null
 
   // Handle bet from tournament details
-  const handleBetFromDetails = (tournamentId: string, teamId: string, teamName: string, odds: number) => {
+  const handleBetFromDetails = (tournamentId: string, teamId: string, amount: number, teamName: string, odds: number) => {
     // Here we would open the bet modal
     // For now, just call the existing bet handler
-    handlePlaceBet(tournamentId, teamId, 0.1, odds) // Default amount for simplicity
+    handlePlaceBet(tournamentId, teamId, amount, odds) // Default amount for simplicity
   }
 
   // Format address for display
